@@ -1,20 +1,22 @@
 import React, { lazy, Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Profile from "./pages/Profile";
-import YourAdds from "./pages/YourAdds";
-import YourWishList from "./pages/YourWishList";
-import EditProduct from "./pages/EditProduct";
+import { Toaster } from "react-hot-toast";
+import Loader from "./components/Loader";
 
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
 const Products = lazy(() => import("./pages/Products"));
 const OneProduct = lazy(() => import("./pages/OneProduct"));
 const SellProduct = lazy(() => import("./pages/SellProduct"));
+const YourAdds = lazy(() => import("./pages/YourAdds"));
+const YourWishList = lazy(() => import("./pages/YourWishList"));
+const EditProduct = lazy(() => import("./pages/EditProduct"));
+const Profile = lazy(() => import("./pages/Profile"));
 
 const App = () => {
 	return (
 		<BrowserRouter>
-			<Suspense>
+			<Suspense fallback={<Loader />}>
 				<Routes>
 					<Route path="/" element={<Home />} />
 					<Route path="/login" element={<Login />} />
@@ -27,6 +29,7 @@ const App = () => {
 					<Route path="/edit/product" element={<EditProduct />} />
 				</Routes>
 			</Suspense>
+			<Toaster />
 		</BrowserRouter>
 	);
 };
