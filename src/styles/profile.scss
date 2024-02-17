@@ -1,23 +1,30 @@
 .profilePage {
 	padding: 1.5rem 3rem;
 	@include flex(column);
+	height: 100vh;
+	border: 1px solid red;
 	main {
 		border: 1px solid red;
 		width: 90%;
 		margin: auto;
 		> .update {
 			border: 1px solid red;
-			@include flex(column, center, center);
+			@include flex(row, center, center);
 			width: 100%;
-			section {
+			.img {
+				@include flex(column, center, center);
+				border: 1px solid red;
 				width: 40%;
+				height: 50vh;
 				img {
+					margin-top: 15%;
 					border: 1px solid red;
 					@include square(10rem);
 					border-radius: 50%;
 					object-fit: cover;
 				}
 				div {
+					margin-top: auto;
 					@include flex;
 					border: 1px solid red;
 					button {
@@ -31,6 +38,10 @@
 						font-size: 1rem;
 					}
 				}
+			}
+			.details {
+				border: 1px solid red;
+				width: 60%;
 			}
 		}
 	}

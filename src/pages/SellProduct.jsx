@@ -140,7 +140,12 @@ const SellProduct = () => {
 					<div>
 						<p className="category half">
 							<label htmlFor="category">Category</label>
-							<select value={category} onChange={handleCategoryChange}>
+							<select
+								id="category"
+								name="category"
+								value={category}
+								onChange={handleCategoryChange}
+							>
 								<option value="">category</option>
 								{categories.map((category) => (
 									<option key={category} value={category}>
@@ -176,7 +181,7 @@ const SellProduct = () => {
 						</p>
 						<p className="model full">
 							<label htmlFor="model">Model</label>
-							<select value={modal} onChange={handleModelChange}>
+							<select id="model" name="model" value={modal} onChange={handleModelChange}>
 								<option value="">Choose a model</option>
 								{category &&
 									CategoriesObj[category].map((model) => (
@@ -189,7 +194,7 @@ const SellProduct = () => {
 						<p className="minPrice half">
 							<label htmlFor="minPrice">Min Price</label>
 							<input
-								type="text"
+								type="number"
 								name="minPrice"
 								id="minPrice"
 								placeholder="Min Price"
@@ -199,9 +204,8 @@ const SellProduct = () => {
 						</p>
 						<p className="maxPrice half">
 							<label htmlFor="maxPrice">Max Price</label>
-
 							<input
-								type="text"
+								type="number"
 								name="maxPrice"
 								id="maxPrice"
 								value={maxPrice}
@@ -212,7 +216,7 @@ const SellProduct = () => {
 						<p className="number full">
 							<label htmlFor="number">Contact Number</label>
 							<input
-								type="text"
+								type="number"
 								name="number"
 								id="number"
 								value={number}
