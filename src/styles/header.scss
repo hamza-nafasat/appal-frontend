@@ -1,0 +1,184 @@
+.header {
+	@include flex(column);
+	gap: 0.8rem;
+	width: 90%;
+	margin: 0 auto;
+	// border: 1px solid red;
+	> .navbar {
+		@include flex(row, space-between, center, 2rem);
+		height: 3.25rem;
+		width: 100%;
+		.logo {
+			height: 3rem;
+			margin-right: 1rem;
+			h3 {
+				color: $blue;
+				font-size: 2rem;
+				font-weight: 600;
+				line-height: 3rem;
+			}
+		}
+		> .cities {
+			border: 1px solid $blue;
+			border-radius: 12px;
+			width: 15rem;
+			height: 100%;
+			cursor: pointer;
+			@include flex(row, flex-start);
+			gap: 0.625rem;
+			color: $gray;
+			padding: 0 0.625rem;
+			position: relative;
+			.loc {
+				@include square(2rem);
+			}
+			.arr {
+				@include square(1.3rem);
+			}
+			> p {
+				margin-right: auto;
+			}
+			> .popup {
+				position: absolute;
+				top: -3px;
+				left: -1px;
+				z-index: 2;
+				width: 101%;
+				border-radius: 10px;
+				border: none;
+				background-color: white;
+				box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+				backdrop-filter: black;
+				@include flex(column, space-around, unset, 0rem);
+				display: none;
+				> p {
+					padding: 0.3rem 2.25rem;
+					font-size: 1rem;
+					border-bottom: 1px solid $black;
+					cursor: pointer;
+					button {
+						background-color: transparent;
+						@include button(100%, 0, black, transparent, transparent, 0.875rem);
+						text-align: start;
+					}
+					&:hover {
+						background-color: $white;
+					}
+					&:first-child {
+						border-top-left-radius: 12px;
+						border-top-right-radius: 12px;
+					}
+					&:last-child {
+						border: none;
+						border-bottom-left-radius: 12px;
+						border-bottom-right-radius: 12px;
+					}
+				}
+			}
+		}
+		> .searchBar {
+			width: 35rem;
+			height: 100%;
+			border: 1px solid $blue;
+			border-radius: 12px;
+			padding: 0 1rem;
+			color: $gray;
+			@include flex(row, space-between);
+			input {
+				@include inputStyle;
+				font-size: 1rem;
+			}
+			svg {
+				@include square(1.5rem);
+			}
+		}
+		> .buttons {
+			width: 10.5625rem;
+			@include flex;
+			a {
+				@include flex;
+				height: 100%;
+				img {
+					@include square(3rem);
+					border-radius: 50%;
+				}
+			}
+			.sell {
+				@include button(6.5rem, 0.625rem 0rem, $blue, transparent, transparent, 24px);
+				border: 1px solid $blue;
+				border-radius: 8px;
+				font-weight: 600;
+			}
+		}
+	}
+	> .categories {
+		@include flex(row, space-between, center, 2rem);
+		height: 3.875rem;
+		width: 100%;
+		.list {
+			position: relative;
+			width: 100%;
+			height: 100%;
+			@include flex(row, space-around);
+			border: 1px solid $gray;
+			border-radius: 12px;
+			p {
+				@include flex;
+				font-size: 1.125rem;
+				&:first-child {
+					font-size: 1.25rem;
+				}
+			}
+			.mainPopUp {
+				position: absolute;
+				top: -3px;
+				left: -3px;
+				width: 101%;
+				border-radius: 10px;
+				border: none;
+				padding: 1rem;
+				background-color: white;
+				box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+				backdrop-filter: black;
+				@include flex(row, space-around, unset);
+				display: none;
+				section {
+					// border: 1px solid red;
+					width: 15%;
+					overflow: hidden;
+					@include customScrollbar(none);
+					button {
+						background-color: transparent;
+						@include button(100%, 0, black, transparent, transparent, 0.875rem);
+						text-align: start;
+					}
+					&:first-child {
+						@include flex(row, center, flex-start);
+						width: 23%;
+					}
+					h4 {
+						@include flex(row, space-between, center);
+						// border: 1px solid red;
+						font-size: 1.2rem;
+						margin: 0;
+						margin-bottom: 1rem;
+						font-weight: 400;
+						text-align: center;
+					}
+				}
+			}
+		}
+		> .msg {
+			@include flex;
+			width: 8.5rem;
+			height: 100%;
+			border: 1px solid $gray;
+			border-radius: 12px;
+			cursor: pointer;
+			svg {
+				@include square(2rem);
+				color: $blue;
+			}
+		}
+	}
+}

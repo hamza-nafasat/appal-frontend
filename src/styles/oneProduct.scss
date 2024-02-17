@@ -1,0 +1,219 @@
+.onProductPage {
+	padding: 1.5rem 3rem;
+	@include flex(column);
+	main {
+		// border: 1px solid red;
+		width: 90%;
+		height: max-content;
+		@include flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 2rem;
+		.first {
+			// border: 1px solid red;
+			width: 65%;
+			img {
+				width: 100%;
+				border-radius: 12px;
+			}
+			.details {
+				// border: 1px solid red;
+				@include flex(row, space-between, center, 1rem);
+				> p {
+					font-size: 2rem;
+					color: $blue;
+					font-weight: 600;
+				}
+				.abs {
+					font-size: 0.7rem;
+					font-size: 400;
+					color: $gray;
+					margin-right: auto;
+				}
+				svg {
+					cursor: pointer;
+					font-size: 1.5rem;
+					margin-right: 2px;
+				}
+			}
+			.mainDetails {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: space-between;
+				div {
+					@include flex;
+					justify-content: space-between;
+					border: 1px solid $gray;
+					padding: 0.7rem 1.5rem;
+					border-radius: 12px;
+					margin: 0.5rem;
+					width: 45%;
+					p {
+						font-size: 1.125rem;
+						font-weight: 600;
+						margin-right: 1rem;
+						&:last-child {
+							font-weight: 400;
+						}
+					}
+					&:last-child {
+						width: 100%;
+					}
+				}
+			}
+		}
+		.second {
+			// border: 1px solid red;
+			width: 35%;
+			height: 100%;
+			@include flex(column, space-between, center, 2rem);
+			.profile {
+				margin-top: 2rem;
+				// border: 1px solid red;
+				@include flex(row, spa ce-around, flex-start);
+				img {
+					// border: 1px solid red;
+					border-radius: 50%;
+					object-fit: cover;
+					@include square(7rem);
+				}
+				.userDetails {
+					// border: 1px solid red;
+					@include flex(column, center, unset);
+					gap: 0;
+					h4 {
+						// border: 1px solid red;
+						font-size: 1.5rem;
+						text-transform: uppercase;
+						font-weight: 500;
+					}
+					p {
+						// border: 1px solid red;
+						font-size: 1.3rem;
+						font: 400;
+					}
+					.buttons {
+						// border: 1px solid red;
+						@include flex(row, space-between, center, 1rem);
+						margin-top: 1rem;
+						button {
+							@include flex;
+							@include button(8rem, 0.8rem, white, $blue, $blue, 1rem, 10px);
+							&:last-child {
+								@include square(3rem);
+								border-radius: 50%;
+								svg {
+									font-size: 2rem;
+								}
+							}
+						}
+					}
+				}
+			}
+			.bids {
+				position: relative;
+				width: 100%;
+				@include flex(column, unset, unset, 1.5rem);
+				// border: 1px solid red;
+				h2 {
+					font-size: 2rem;
+					font-weight: 500;
+				}
+				.bidNowPopUp {
+					position: absolute;
+					top: 0;
+					left: 0;
+					background-color: rgb(255, 255, 210);
+					width: 100%;
+					height: 100%;
+					border-radius: 12px;
+					padding: 2rem;
+					box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
+					backdrop-filter: blur(5px);
+					// border: 1px solid red;
+					@include flex(column, space-between, center, 1rem);
+					.inputs {
+						// border: 1px solid red;
+						height: 80%;
+						width: 100%;
+						@include flex(column, flex-start, flex-start, 1rem);
+						input {
+							@include inputStyle;
+							border: 1px solid $lightGray;
+							border-radius: 12px;
+						}
+						textarea {
+							@include inputStyle;
+							border: 1px solid $lightGray;
+							height: 100%;
+							border-radius: 12px;
+						}
+					}
+					.buttons {
+						width: 100%;
+						// border: 1px solid red;
+						@include flex(row, space-between, center);
+						button {
+							@include button(
+								10rem,
+								0.625rem 0,
+								$blue,
+								transparent,
+								transparent,
+								1rem,
+								0.625rem,
+								1px solid $blue
+							);
+							&:last-child {
+								@include button(5rem, 0.625rem 0, white, $blue, $blue, 1rem, 0.625rem);
+							}
+						}
+					}
+				}
+				.allBids {
+					@include flex(column, unset, unset, 1rem);
+					max-height: 20rem;
+					overflow: auto;
+					@include customScrollbar(block, 2px);
+					.bid {
+						@include flex(row, space-between, flex-start, 0, wrap);
+						border: 1px solid $gray;
+						width: 98%;
+						border-radius: 12px;
+						padding: 1rem;
+						.user {
+							width: 50%;
+							// border: 1px solid red;
+							@include flex(row, flex-start, flex-start, 0.5rem);
+							p {
+								font-size: 1.25rem;
+								font-weight: 700;
+								&:last-child {
+									font-size: 10px;
+									font-weight: 400;
+									text-align: center;
+								}
+							}
+						}
+						.price {
+							// border: 1px solid red;
+							width: 46%;
+							h3 {
+								text-align: right;
+								color: $blue;
+							}
+						}
+						.description {
+							margin-top: 1rem;
+							width: 100%;
+							// border: 1px solid red;
+							p {
+								font-size: 0.875rem;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

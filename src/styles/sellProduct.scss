@@ -1,0 +1,77 @@
+.sellProductPage {
+	padding: 1.5rem 3rem;
+	@include flex(column);
+	main {
+		width: 90%;
+		@include flex(row, space-between, flex-start, 1rem);
+		// border: 1px solid red;
+		.inputs {
+			width: 40%;
+			h2 {
+				margin-bottom: 1rem;
+			}
+			// border: 1px solid red;
+			> div {
+				@include flex(row, space-between, center, 0, wrap);
+				p {
+					position: relative;
+					padding: 0rem 0 0.6rem;
+					// border: 1px solid red;
+					label {
+						position: absolute;
+						z-index: 5;
+						font-size: 0.75rem;
+						top: -0.5rem;
+						left: 20px;
+						background-color: $white;
+						color: $gray;
+					}
+					input,
+					select,
+					textarea {
+						position: relative;
+						@include inputStyle;
+						padding: 0.7rem 1rem;
+						border: 1px solid $lightGray;
+						border-radius: 12px;
+						font-size: 1rem;
+						color: black;
+					}
+					input::placeholder,
+					select::placeholder,
+					textarea::placeholder {
+						color: black;
+					}
+				}
+				.full {
+					width: 100%;
+				}
+				.half {
+					width: 48%;
+				}
+			}
+		}
+		.imageUpload {
+			width: 54%;
+			// border: 1px solid red;
+			@include flex(column, center, unset, 1rem);
+			img {
+				width: 100%;
+				min-height: 21rem;
+				max-height: 21rem;
+				object-fit: cover;
+				border-radius: 10px;
+			}
+			button {
+				@include button;
+				padding: 0.7rem 0;
+				color: white;
+				font-size: 1.3rem;
+				border-radius: 5px;
+				max-width: 9rem;
+				@include flex;
+				align-self: self-end;
+			}
+		}
+	}
+}

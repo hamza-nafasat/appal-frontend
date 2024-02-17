@@ -1,0 +1,67 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@font-face {
+	font-family: "Poppins";
+	src: url("/fonts/Poppins-Regular.ttf") format("truetype");
+	font-weight: 400;
+	font-style: normal;
+}
+
+// UNIVERSAL CSS
+// =============
+$white: #efefef;
+$black: #000000;
+$lightGray: #979797;
+$gray: #666666;
+$blue: #0089cd;
+
+@import "mixin.scss";
+
+:root {
+	font-family: "Poppins", sans-serif;
+	line-height: 1.5;
+	font-weight: 400;
+}
+* {
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+	font-family: "Poppins", sans-serif;
+}
+body {
+	background: $white;
+}
+
+.blue {
+	color: $blue;
+}
+a {
+	text-decoration: none;
+	color: $black;
+}
+
+@import "home.scss";
+@import "login.scss";
+@import "header.scss";
+@import "products.scss";
+@import "oneProduct.scss";
+@import "sellProduct.scss";
+@import "profile.scss";
+
+.profileHeader {
+	width: 100%;
+	border: 1px solid $gray;
+	border-radius: 12px;
+	padding: 0.5rem 0rem;
+	margin-top: -10px;
+	@include flex(row, space-between);
+	a {
+		@include flex(row, center, center, 1rem);
+		// border: 1px solid red;
+		width: 100%;
+		font-size: 1.5rem;
+		border-right: 2px solid black;
+		&:last-of-type {
+			border: none;
+		}
+	}
+}
