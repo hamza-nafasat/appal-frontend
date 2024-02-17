@@ -4,7 +4,7 @@ import { IoHeart } from "react-icons/io5";
 import { FaRegHeart } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 
-const profileHeader = () => {
+const ProfileHeader = () => {
 	return (
 		<article className="profileHeader">
 			<LinkComponent
@@ -22,7 +22,7 @@ const profileHeader = () => {
 	);
 };
 
-export default profileHeader;
+export default ProfileHeader;
 
 function LinkComponent({ url, title, svg }) {
 	const urlParts = window.location.href.split("/");

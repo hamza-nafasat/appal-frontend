@@ -1,4 +1,4 @@
-.sellProductPage {
+.editProductPage {
 	padding: 1.5rem 3rem;
 	@include flex(column);
 	main {
@@ -69,9 +69,12 @@
 				color: white;
 				font-size: 1.3rem;
 				border-radius: 5px;
-				max-width: 9rem;
+				max-width: 8.5rem;
 				@include flex;
 				align-self: self-end;
+				&:last-of-type {
+					max-width: 12rem;
+				}
 			}
 		}
 	}

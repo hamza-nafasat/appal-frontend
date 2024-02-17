@@ -46,14 +46,17 @@ a {
 @import "oneProduct.scss";
 @import "sellProduct.scss";
 @import "profile.scss";
+@import "yourAdds.scss";
+@import "yourWishlist.scss";
+@import "editProduct.scss";
 
 .profileHeader {
 	width: 100%;
 	border: 1px solid $gray;
 	border-radius: 12px;
 	padding: 0.5rem 0rem;
-	margin-top: -10px;
 	@include flex(row, space-between);
+
 	a {
 		@include flex(row, center, center, 1rem);
 		// border: 1px solid red;

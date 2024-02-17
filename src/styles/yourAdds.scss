@@ -1,30 +1,24 @@
-.productPage {
+.yourAddsPage {
+	//border: 1px solid red;
 	padding: 1.5rem 3rem;
 	@include flex(column);
+	gap: 0.5rem;
 	main {
-		//border: 1px solid red;
 		width: 90%;
-		margin: auto;
-		@include flex(column, unset unset, 0rem);
-		> header {
-			//border: 1px solid red;
-			h2 {
-				font-size: 1.6rem;
-				font-weight: 600;
-				text-align: start;
-			}
-		}
-		> article {
-			//border: 1px solid red;
-			@include flex(row, space-between, flex-start, 0.5rem, wrap);
-			row-gap: 1rem;
+		margin: 0 auto;
+		@include flex(column, unset, unset);
+		.allAdds {
+			// border: 1px solid red;
+			width: 100%;
+			@include flex(row, space-between, center, 2rem, wrap);
 		}
 	}
 }
 
-.singleProduct {
+.oneAdd {
 	//border: 1px solid red;
-	@include square(15rem);
+	height: 18rem;
+	width: 23rem;
 	background-color: #d9d9d9;
 	border-radius: 10px;
 	> a {
@@ -39,15 +33,27 @@
 	}
 	.details {
 		//border: 1px solid red;
-		padding: 0 0.4rem;
+		padding: 0 1.3rem;
 		position: relative;
 		height: 50%;
-		@include flex(column, center, unset, 0.4rem);
-		svg {
+		@include flex(column, center, unset, 1rem);
+		.editDel {
 			position: absolute;
-			top: 1rem;
+			top: 0.7rem;
 			right: 1rem;
-			cursor: pointer;
+			// border: 1px solid red;
+			@include flex;
+			gap: 0.5rem;
+			a {
+				// border: 1px solid red;
+				top: 0.7rem;
+				right: 0.5rem;
+				@include flex;
+			}
+			svg {
+				@include square(1.5rem);
+				cursor: pointer;
+			}
 		}
 		p {
 			font-size: 1.125rem;
@@ -58,7 +64,7 @@
 				color: $gray;
 				position: absolute;
 				bottom: 1rem;
-				right: 1rem;
+				right: 0.9rem;
 			}
 		}
 	}

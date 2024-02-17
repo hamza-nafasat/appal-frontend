@@ -32,9 +32,9 @@ function NavBar() {
 
 	return (
 		<article className="navbar">
-			<div className="logo">
+			<Link to={"/"} className="logo">
 				<h3>Appal</h3>
-			</div>
+			</Link>
 			<div onClick={() => setOpen(!open)} className="cities">
 				<IoLocationSharp className="loc" />
 				<p>Location</p>
