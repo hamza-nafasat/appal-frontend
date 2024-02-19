@@ -6,11 +6,13 @@ import { MdMessage } from "react-icons/md";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
 import { CategoriesObj, cities } from "./txt";
+import { useSelector } from "react-redux";
 
 const Header = () => {
+	const { user, loading } = useSelector((state) => state.userReducer);
 	return (
 		<header className="header">
-			<NavBar />
+			<NavBar photo={user?.photo} />
 			<Category />
 		</header>
 	);
@@ -18,7 +20,8 @@ const Header = () => {
 
 export default Header;
 
-function NavBar() {
+function NavBar({ photo }) {
+	// photo = undefined;
 	const [open, setOpen] = useState(false);
 	const [value, setValue] = useState("");
 
@@ -26,9 +29,6 @@ function NavBar() {
 		setValue(item);
 		setOpen(false);
 	};
-	useEffect(() => {
-		console.log(value);
-	}, [value]);
 
 	return (
 		<article className="navbar">
@@ -59,7 +59,11 @@ function NavBar() {
 			</div>
 			<div className="buttons">
 				<Link to={"/profile"}>
-					<img src="https://avatars.githubusercontent.com/u/149063128?v=4" alt="user dp" />
+					<img
+						src={photo ? photo : "/src/assets/noProfile.jpg"}
+						alt="user dp"
+						onError={(error) => picError(error)}
+					/>
 				</Link>
 				<Link className={"sell"} to={"/sell/product"}>
 					sell
@@ -98,9 +102,6 @@ function PopUp({ open, setOpen }) {
 		setValue(item);
 		setOpen(false);
 	};
-	useEffect(() => {
-		console.log(value);
-	}, [value]);
 
 	return (
 		<div className="mainPopUp" style={{ display: open ? "flex" : "none" }}>

@@ -31,6 +31,7 @@
 			position: relative;
 			.loc {
 				@include square(2rem);
+				color: $lightGray;
 			}
 			.arr {
 				@include square(1.3rem);

@@ -2,16 +2,22 @@ import React, { useState } from "react";
 import Header from "../components/Header";
 import ProfileHeader from "../components/profileHeader";
 import { LuLogOut } from "react-icons/lu";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase";
+import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
 
 const Profile = () => {
-	const [name, setName] = useState("John Doe");
-	const [email, setEmail] = useState("johndoe@gmail.com");
-	const [number, setNumber] = useState("+92301599867");
-	const [dob, setDob] = useState("23-11-2001");
-	const [sinceMember, setSinceMember] = useState("2000");
-	const [verified, setVerified] = useState(false);
-	const [primaryImg, setPrimaryImg] = useState("/src/assets/profile.png");
-	const [secondaryImg, setSecondaryImg] = useState("/src/assets/noProfile.jpg");
+	const { user } = useSelector((state) => state.userReducer);
+
+	const [name, setName] = useState(user.name);
+	const [primaryImg, setPrimaryImg] = useState(user.photo);
+	const [email] = useState(user.email);
+	const [number] = useState(user.number ? String(user.number) : "");
+	const [dob, setDob] = useState(String(user.dob) && "");
+	const [sinceMember] = useState(new Date(user.createdAt).getFullYear());
+	const [verified] = useState(user.isVerified);
+	const [secondaryImg] = useState("/src/assets/noProfile.jpg");
 
 	const handlePrimaryImageError = (error) => {
 		if (error) setPrimaryImg(secondaryImg);
@@ -22,8 +28,17 @@ const Profile = () => {
 	};
 	const submitHandler = (e) => {
 		e.preventDefault();
+		console.log(dob);
 	};
-
+	const logoutHandler = async () => {
+		try {
+			await signOut(auth);
+			toast.success("Logout Successfully");
+		} catch (error) {
+			toast.error("Logout Failed");
+			console.log("Logout Error", error);
+		}
+	};
 	return (
 		<div className="profilePage">
 			<Header />
@@ -36,7 +51,7 @@ const Profile = () => {
 							alt="userProfile"
 							onError={(error) => handlePrimaryImageError(error)}
 						/>
-						<button>
+						<button onClick={logoutHandler}>
 							<LuLogOut />
 							Logout
 						</button>
@@ -56,14 +71,16 @@ const Profile = () => {
 								<label>Email</label>
 								<input type="email" value={email} disabled />
 							</p>
-							<p className="number">
-								<label>Phone Number</label>
-								<input type="text" value={number} disabled />
-							</p>
+							{number && (
+								<p className="number">
+									<label>Phone Number</label>
+									<input type="text" value={number} disabled />
+								</p>
+							)}
 							<p className="dob" style={{ marginRight: "auto" }}>
 								<label>Dob</label>
 								<input
-									type="text"
+									type="date"
 									value={dob}
 									onChange={(e) => setDob(e.target.value)}
 								/>

@@ -1,7 +1,13 @@
-import React, { lazy, Suspense } from "react";
+import React, { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Loader from "./components/Loader";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase";
+import { useDispatch, useSelector } from "react-redux";
+import { userExist, userNotExist } from "./redux/reducers/userReducers";
+import { getUser } from "./redux/api/userApi";
+import ProtectedRoutes from "./components/ProtectedRoutes";
 
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
@@ -14,22 +20,54 @@ const EditProduct = lazy(() => import("./pages/EditProduct"));
 const Profile = lazy(() => import("./pages/Profile"));
 
 const App = () => {
-	return (
+	const dispatch = useDispatch();
+	const { user, loading } = useSelector((state) => state.userReducer);
+	// console.log(user);
+	useEffect(() => {
+		onAuthStateChanged(auth, async (user) => {
+			if (user) {
+				const data = await getUser(user.uid);
+				dispatch(userExist(data.data));
+				console.log("LOGIN");
+			} else {
+				dispatch(userNotExist());
+				console.log("NOT LOGIN");
+			}
+		});
+	}, []);
+
+	return loading ? (
+		<Loader />
+	) : (
 		<BrowserRouter>
 			<Suspense fallback={<Loader />}>
 				<Routes>
-					<Route path="/" element={<Home />} />
-					<Route path="/login" element={<Login />} />
-					<Route path="/products/:id" element={<Products />} />
-					<Route path="/product/:id" element={<OneProduct />} />
-					<Route path="/sell/product" element={<SellProduct />} />
-					<Route path="/profile" element={<Profile />} />
-					<Route path="/profile/adds" element={<YourAdds />} />
-					<Route path="/profile/wishlist" element={<YourWishList />} />
-					<Route path="/edit/product" element={<EditProduct />} />
+					<Route
+						path="/login"
+						element={
+							<ProtectedRoutes isAuthenticated={user ? false : true} redirect="/">
+								<Login />
+							</ProtectedRoutes>
+						}
+					/>
+
+					<Route
+						element={
+							<ProtectedRoutes isAuthenticated={user ? true : false} redirect="/login" />
+						}
+					>
+						<Route path="/" element={<Home />} />
+						<Route path="/products/:id" element={<Products />} />
+						<Route path="/product/:id" element={<OneProduct />} />
+						<Route path="/sell/product" element={<SellProduct />} />
+						<Route path="/profile" element={<Profile />} />
+						<Route path="/profile/adds" element={<YourAdds />} />
+						<Route path="/profile/wishlist" element={<YourWishList />} />
+						<Route path="/edit/product" element={<EditProduct />} />
+					</Route>
 				</Routes>
 			</Suspense>
-			<Toaster />
+			<Toaster position="top-right" />
 		</BrowserRouter>
 	);
 };
