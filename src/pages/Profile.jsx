@@ -6,6 +6,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
+import Loader from "../components/Loader";
 
 const Profile = () => {
 	const { user } = useSelector((state) => state.userReducer);
@@ -23,9 +24,9 @@ const Profile = () => {
 		if (error) setPrimaryImg(secondaryImg);
 		else console.error("Error loading primary image:", error);
 	};
-	const verifiedYourAcc = (e) => {
-		e.preventDefault();
-	};
+
+	const handleSendCode = () => {};
+
 	const submitHandler = (e) => {
 		e.preventDefault();
 		console.log(dob);
@@ -39,7 +40,9 @@ const Profile = () => {
 			console.log("Logout Error", error);
 		}
 	};
-	return (
+	return !user ? (
+		<Loader />
+	) : (
 		<div className="profilePage">
 			<Header />
 			<main>
@@ -95,7 +98,7 @@ const Profile = () => {
 									<input type="text" value={"Account Verified"} disabled />
 								</p>
 							) : (
-								<button onClick={verifiedYourAcc}>Verified Your Account</button>
+								<button onClick={handleSendCode}>Verified Your Account</button>
 							)}
 							<button type="submit">Save Changes</button>
 						</form>

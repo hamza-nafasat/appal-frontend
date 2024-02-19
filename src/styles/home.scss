@@ -1,18 +1,14 @@
 .homePage {
-	// border: 1px solid red;
 	padding: 1.5rem 3rem;
 	@include flex(column);
 	main {
-		// border: 1px solid red;
 		width: 90%;
 	}
 }
 .homeCategories {
 	width: 100%;
 	margin: auto;
-	// border: 1px solid red;
 	> h2 {
-		// border: 1px solid red;
 		font-size: 1.6rem;
 		font-weight: 600;
 		text-align: start;
@@ -22,7 +18,6 @@
 		> section {
 			@include flex(column);
 			gap: 0.75rem;
-			// border: 1px solid red;
 			> button {
 				cursor: pointer;
 				background-color: #d9d9d9;
@@ -44,17 +39,13 @@
 	width: 100%;
 	@include flex(column);
 	gap: 2rem;
-	// border: 1px solid red;
 	.productsArticle {
 		width: 100%;
 		@include flex(column);
-		// border: 1px solid red;
 		> header {
 			width: 100%;
-			// border: 1px solid red;
 			@include flex(row, space-between);
 			> h2 {
-				// border: 1px solid red;
 				font-size: 1.6rem;
 				font-weight: 600;
 				text-align: start;
@@ -67,36 +58,36 @@
 		> main {
 			@include flex(row, space-between);
 			width: 100%;
-			// border: 1px solid red;
 			.singleProduct {
-				// border: 1px solid red;
-				@include square(15rem);
+				height: 17rem;
+				width: 15rem;
 				background-color: #d9d9d9;
 				border-radius: 10px;
+				box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 				> a {
 					img {
 						border-top-left-radius: 10px;
 						border-top-right-radius: 10px;
 						width: 100%;
 						height: 50%;
+						background-color: white;
 						cursor: pointer;
-						object-fit: cover;
+						object-fit: contain;
 					}
 				}
 				.details {
-					// border: 1px solid red;
 					padding: 0 0.4rem;
 					position: relative;
 					height: 50%;
-					@include flex(column, center, unset, 0.4rem);
+					@include flex(column, flex-start, unset, 0.6rem);
 					svg {
 						position: absolute;
-						top: 1rem;
+						top: 0.2rem;
 						right: 1rem;
 						cursor: pointer;
 					}
 					p {
-						font-size: 1.125rem;
+						font-size: 1rem;
 						font-weight: 600;
 						&:last-child {
 							font-size: 12px;

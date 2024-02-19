@@ -14,6 +14,15 @@ export const userApi = createApi({
 				body: user,
 			}),
 		}),
+		addToWishList: builder.mutation({
+			query: ({ productId, _id }) => ({
+				url: `/wishlist?_id=${_id}`,
+				method: "PUT",
+				body: {
+					productId,
+				},
+			}),
+		}),
 	}),
 });
 
@@ -28,4 +37,4 @@ export const getUser = async (_id) => {
 	}
 };
 
-export const { useLoginMutation } = userApi;
+export const { useLoginMutation, useAddToWishListMutation } = userApi;

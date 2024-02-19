@@ -4,23 +4,24 @@ import ProfileHeader from "../components/profileHeader";
 import { FiEdit } from "react-icons/fi";
 import { GoTrash } from "react-icons/go";
 import { Link } from "react-router-dom";
+import { useAllUserAddsQuery, useGetSingleProductQuery } from "../redux/api/productsApi";
+import { useSelector } from "react-redux";
+import { calculateTimeDifference } from "../utils/function";
+import Loader from "../components/Loader";
 
 const YourAdds = () => {
+	const { user } = useSelector((state) => state.userReducer);
+	const { data } = useAllUserAddsQuery({ userId: user._id });
+	console.log(data);
 	return (
 		<div className="yourAddsPage">
 			<Header />
 			<main>
 				<ProfileHeader />
 				<article className="allAdds">
-					<OneAdd />
-					<OneAdd />
-					<OneAdd />
-					<OneAdd />
-					<OneAdd />
-					<OneAdd />
-					<OneAdd />
-					<OneAdd />
-					<OneAdd />
+					{data?.data?.map((product, i) => (
+						<OneAdd key={i} product={product} />
+					))}
 				</article>
 			</main>
 		</div>
@@ -29,11 +30,11 @@ const YourAdds = () => {
 
 export default YourAdds;
 
-export function OneAdd({ wish }) {
+export function OneAdd({ wish, product }) {
 	return (
 		<section className="oneAdd">
-			<Link to={"/product/_id"}>
-				<img src={"/src/assets/mobile.png"} alt="" />
+			<Link to={`/product/${product?._id}`}>
+				<img src={product?.photos?.[0]} alt={product?.name} />
 			</Link>
 			<div className="details">
 				<div className="editDel" style={{ display: wish ? "none" : "flex" }}>
@@ -42,10 +43,10 @@ export function OneAdd({ wish }) {
 					</Link>
 					<GoTrash />
 				</div>
-				<p>RS 40000/-</p>
-				<p>iphone 15 pro max</p>
-				<p>Lahore</p>
-				<p>2 days ago</p>
+				<p>RS {product?.price}/-</p>
+				<p>{product?.model}</p>
+				<p>{product?.city}</p>
+				<p>{calculateTimeDifference(product?.createdAt)}</p>
 			</div>
 		</section>
 	);

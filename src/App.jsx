@@ -22,16 +22,15 @@ const Profile = lazy(() => import("./pages/Profile"));
 const App = () => {
 	const dispatch = useDispatch();
 	const { user, loading } = useSelector((state) => state.userReducer);
-	// console.log(user);
 	useEffect(() => {
 		onAuthStateChanged(auth, async (user) => {
 			if (user) {
 				const data = await getUser(user.uid);
 				dispatch(userExist(data.data));
-				console.log("LOGIN");
+				// console.log("LOGIN");
 			} else {
 				dispatch(userNotExist());
-				console.log("NOT LOGIN");
+				// console.log("NOT LOGIN");
 			}
 		});
 	}, []);

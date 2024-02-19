@@ -1,9 +1,12 @@
 import { useState } from "react";
 import Header from "../components/Header";
+import { useCreateProductMutation } from "../redux/api/productsApi";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
-const categories = ["iphone", "ipad", "airpod", "mackbook", "watche", "homepod"];
+export const categories = ["iphone", "ipad", "airpod", "mackbook", "watche", "homepod"];
 
-const CategoriesObj = {
+export const CategoriesObj = {
 	iphone: [
 		"iPhone 15 Pro Max",
 		"iPhone 15 Pro",
@@ -69,62 +72,70 @@ const CategoriesObj = {
 	],
 	homepod: ["HomePod mini", "HomePod"],
 };
-export const fileStyle = {
-	cursor: "pointer",
-	marginLeft: "0",
-	fontSize: "1rem",
-	width: "12rem",
-	height: "3rem",
-	border: "none",
-	backgroundColor: "#0089cd",
-};
 
 const SellProduct = () => {
 	const [location, setLocation] = useState("");
-	const [number, setNumber] = useState("");
+	const [address, setAddress] = useState("");
 	const [condition, setCondition] = useState("");
 	const [minPrice, setMinPrice] = useState("");
+	const [status, setStatus] = useState("available");
 	const [maxPrice, setMaxPrice] = useState("");
 	const [description, setDescription] = useState("");
 	const [category, setCategory] = useState("");
 	const [modal, setModal] = useState("");
 	const [selectedImages, setSelectedImages] = useState([]);
 	const [showedImage, setShowedImage] = useState(null);
+	const { user } = useSelector((state) => (state) => state.userReducer);
 
+	const [createProduct, { isLoading, isSuccess, isError, error }] = useCreateProductMutation();
 	const handleImageChange = (event) => {
-		setShowedImage(event.target.files[0]);
-		// setSelectedImages((pre) => [...pre, event.target.files[0]]);
-		if (showedImage) {
-			setShowedImage(event.target.files[0]);
-			const fileReader = new FileReader();
-			fileReader.onload = () => {
-				setSelectedImages((prevImages) => [...prevImages, fileReader.result]);
-			};
-			fileReader.readAsDataURL(event.target.files[0]);
+		const file = event.target.files[0];
+		if (file) {
+			setShowedImage(file);
+			setSelectedImages((prevImages) => [...prevImages, file]);
 		}
 	};
+
+	const submitHandlerForAll = () => {
+		console.log(selectedImages);
+		const formData = new FormData();
+		selectedImages.forEach((file) => formData.append("photos", file));
+		formData.append("city", location);
+		formData.append("address", address);
+		formData.append("condition", condition);
+		formData.append("minPrice", minPrice);
+		formData.append("maxPrice", maxPrice);
+		formData.append("description", description);
+		formData.append("model", modal);
+		formData.append("category", category);
+		formData.append("status", status);
+		createProduct({ formData, _id: user?._id })
+			.unwrap()
+			.then((response) => {
+				toast.success(response.message);
+				console.log("Product created successfully", response);
+				setAddress("");
+				setCategory("");
+				setCondition("");
+				setDescription("");
+				setMaxPrice(""), setMinPrice("");
+				setModal("");
+				setLocation("");
+				setSelectedImages([]);
+				setLocation("");
+			})
+			.catch((error) => {
+				console.error("Error creating product:", error);
+				toast.error(error.data.message);
+			});
+	};
+
 	const handleCategoryChange = (event) => {
 		setCategory(event.target.value);
 		setModal("");
 	};
 	const handleModelChange = (event) => {
 		setModal(event.target.value);
-	};
-	const submitHandlerForAll = () => {
-		const formData = new FormData();
-		selectedImages.map((file) => formData.append("photos", file));
-		console.log(
-			location,
-			number,
-			condition,
-			minPrice,
-			maxPrice,
-			description,
-			modal,
-			category,
-			selectedImages
-		);
-		setSelectedImages([]);
 	};
 	const attachFileHandler = () => {
 		const fileInput = document.getElementById("image");
@@ -184,8 +195,8 @@ const SellProduct = () => {
 							<select id="model" name="model" value={modal} onChange={handleModelChange}>
 								<option value="">Choose a model</option>
 								{category &&
-									CategoriesObj[category].map((model) => (
-										<option key={model} value={model}>
+									CategoriesObj[category].map((model, i) => (
+										<option key={i} value={model}>
 											{model}
 										</option>
 									))}
@@ -194,7 +205,7 @@ const SellProduct = () => {
 						<p className="minPrice half">
 							<label htmlFor="minPrice">Min Price</label>
 							<input
-								type="number"
+								type="address"
 								name="minPrice"
 								id="minPrice"
 								placeholder="Min Price"
@@ -205,7 +216,7 @@ const SellProduct = () => {
 						<p className="maxPrice half">
 							<label htmlFor="maxPrice">Max Price</label>
 							<input
-								type="number"
+								type="address"
 								name="maxPrice"
 								id="maxPrice"
 								value={maxPrice}
@@ -213,15 +224,15 @@ const SellProduct = () => {
 								onChange={(e) => setMaxPrice(e.target.value)}
 							/>
 						</p>
-						<p className="number full">
-							<label htmlFor="number">Contact Number</label>
+						<p className="address full">
+							<label htmlFor="address">Full Address</label>
 							<input
-								type="number"
-								name="number"
-								id="number"
-								value={number}
-								placeholder="Enter you number"
-								onChange={(e) => setNumber(e.target.value)}
+								type="text"
+								name="address"
+								id="address"
+								value={address}
+								placeholder="Enter you address"
+								onChange={(e) => setAddress(e.target.value)}
 							/>
 						</p>
 						<p className="description full">

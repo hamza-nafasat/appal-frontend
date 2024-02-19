@@ -14,11 +14,10 @@
 		}
 	}
 }
-
 .oneAdd {
 	//border: 1px solid red;
 	height: 18rem;
-	width: 23rem;
+	width: 20rem;
 	background-color: #d9d9d9;
 	border-radius: 10px;
 	> a {
@@ -28,7 +27,8 @@
 			width: 100%;
 			height: 50%;
 			cursor: pointer;
-			object-fit: cover;
+			object-fit: contain;
+			background-color: white;
 		}
 	}
 	.details {

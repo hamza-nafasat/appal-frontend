@@ -16,7 +16,7 @@
 		}
 		> article {
 			//border: 1px solid red;
-			@include flex(row, space-between, flex-start, 0.5rem, wrap);
+			@include flex(row, unset, flex-start, 3rem, wrap);
 			row-gap: 1rem;
 		}
 	}
@@ -33,8 +33,9 @@
 			border-top-right-radius: 10px;
 			width: 100%;
 			height: 50%;
+			background-color: white;
 			cursor: pointer;
-			object-fit: cover;
+			object-fit: contain;
 		}
 	}
 	.details {

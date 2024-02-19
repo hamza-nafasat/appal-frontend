@@ -2,22 +2,21 @@
 	padding: 1.5rem 3rem;
 	@include flex(column);
 	main {
-		// border: 1px solid red;
 		width: 90%;
-		height: max-content;
 		@include flex;
 		align-items: flex-start;
 		justify-content: space-between;
 		gap: 2rem;
 		.first {
-			// border: 1px solid red;
 			width: 60%;
 			img {
 				width: 100%;
+				height: 24.3rem;
 				border-radius: 12px;
+				object-fit: contain;
+				background-color: white;
 			}
 			.details {
-				// border: 1px solid red;
 				@include flex(row, space-between, center, 1rem);
 				> p {
 					font-size: 2rem;
@@ -63,37 +62,30 @@
 			}
 		}
 		.second {
-			// border: 1px solid red;
 			width: 35%;
-			height: 100%;
-			@include flex(column, space-between, center, 3.3rem);
+			min-height: 80vh;
+			@include flex(column, center, center, 3.3rem);
 			.profile {
 				margin-top: 2rem;
-				// border: 1px solid red;
 				@include flex(row, spa ce-around, flex-start);
 				img {
-					// border: 1px solid red;
 					border-radius: 50%;
 					object-fit: cover;
 					@include square(7rem);
 				}
 				.userDetails {
-					// border: 1px solid red;
 					@include flex(column, center, unset);
 					gap: 0;
 					h4 {
-						// border: 1px solid red;
 						font-size: 1.5rem;
 						text-transform: uppercase;
 						font-weight: 500;
 					}
 					p {
-						// border: 1px solid red;
 						font-size: 1.3rem;
 						font: 400;
 					}
 					.buttons {
-						// border: 1px solid red;
 						@include flex(row, space-between, center, 1rem);
 						margin-top: 1rem;
 						button {
@@ -114,7 +106,7 @@
 				position: relative;
 				width: 100%;
 				@include flex(column, unset, unset, 1.5rem);
-				// border: 1px solid red;
+
 				h2 {
 					font-size: 2rem;
 					font-weight: 500;
@@ -126,14 +118,14 @@
 					background-color: rgb(255, 255, 210);
 					width: 100%;
 					height: 100%;
+					min-height: 60vh;
 					border-radius: 12px;
 					padding: 2rem;
 					box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
 					backdrop-filter: blur(5px);
-					// border: 1px solid red;
+
 					@include flex(column, space-between, center, 1rem);
 					.inputs {
-						// border: 1px solid red;
 						height: 80%;
 						width: 100%;
 						@include flex(column, flex-start, flex-start, 1rem);
@@ -151,7 +143,7 @@
 					}
 					.buttons {
 						width: 100%;
-						// border: 1px solid red;
+
 						@include flex(row, space-between, center);
 						button {
 							@include button(
@@ -182,9 +174,13 @@
 						border-radius: 12px;
 						padding: 1rem;
 						.user {
-							width: 50%;
-							// border: 1px solid red;
+							min-width: 50%;
 							@include flex(row, flex-start, flex-start, 0.5rem);
+							img {
+								object-fit: cover;
+								border-radius: 50%;
+								@include square(3rem);
+							}
 							p {
 								font-size: 1.25rem;
 								font-weight: 700;
@@ -196,8 +192,7 @@
 							}
 						}
 						.price {
-							// border: 1px solid red;
-							width: 46%;
+							width: auto;
 							h3 {
 								text-align: right;
 								color: $blue;
@@ -206,7 +201,7 @@
 						.description {
 							margin-top: 1rem;
 							width: 100%;
-							// border: 1px solid red;
+
 							p {
 								font-size: 1rem;
 							}

@@ -1,22 +1,25 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import Header from "../components/Header";
 import ProfileHeader from "../components/profileHeader";
-import { FiEdit } from "react-icons/fi";
-import { GoTrash } from "react-icons/go";
-import { Link } from "react-router-dom";
 import { OneAdd } from "./YourAdds";
-
+import { useGetWishListQuery } from "../redux/api/productsApi";
+import Loader from "../components/Loader";
+import { SingleProduct } from "../components/FeaturedCard";
 const YourWishList = () => {
-	return (
+	const { user } = useSelector((state) => state.userReducer);
+	const { data, isLoading, isError } = useGetWishListQuery({ wishlists: user?.wishList });
+	return isLoading ? (
+		<Loader />
+	) : (
 		<div className="yourAddsPage">
 			<Header />
 			<main>
 				<ProfileHeader />
 				<article className="allAdds">
-					<OneAdd wish={true} />
-					<OneAdd wish={true} />
-					<OneAdd wish={true} />
-					<OneAdd wish={true} />
+					{data?.data?.map((wish) => (
+						<SingleProduct product={wish} />
+					))}
 				</article>
 			</main>
 		</div>

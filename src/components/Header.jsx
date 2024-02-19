@@ -1,18 +1,21 @@
 import { useEffect, useState } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { IoLocationSharp } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MdMessage } from "react-icons/md";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
-import { CategoriesObj, cities } from "./txt";
 import { useSelector } from "react-redux";
+import { CategoriesObj, cities } from "./txt";
+import { useAllCitiesQuery } from "../redux/api/productsApi";
 
-const Header = () => {
+const Header = ({ city, setCity, setCategory, category, model, setModel, search, setSearch }) => {
 	const { user, loading } = useSelector((state) => state.userReducer);
+	const navigate = useNavigate("");
+
 	return (
 		<header className="header">
-			<NavBar photo={user?.photo} />
+			<NavBar photo={user?.photo} setCity={setCity} search={search} setSearch={setSearch} />
 			<Category />
 		</header>
 	);
@@ -20,29 +23,32 @@ const Header = () => {
 
 export default Header;
 
-function NavBar({ photo }) {
+function NavBar({ photo, setCity, search, setSearch, setModel }) {
 	// photo = undefined;
 	const [open, setOpen] = useState(false);
 	const [value, setValue] = useState("");
+	const { data } = useAllCitiesQuery("");
 
-	const handleClick = (item) => {
-		setValue(item);
+	const modelClickHandler = (item) => {
+		setCity(item);
 		setOpen(false);
+		navigate("/products/");
 	};
-
+	const locationClickHandler = () => {
+		setOpen(!open);
+	};
 	return (
 		<article className="navbar">
 			<Link to={"/"} className="logo">
 				<h3>Appal</h3>
 			</Link>
-			<div onClick={() => setOpen(!open)} className="cities">
+			<div onClick={locationClickHandler} className="cities">
 				<IoLocationSharp className="loc" />
 				<p>Location</p>
-
 				<IoIosArrowDown className="arr" />
 				<div className="popup" style={{ display: open ? "flex" : "none" }}>
-					{cities.map((item, i) => (
-						<p key={i} onClick={() => handleClick(item)}>
+					{data?.data?.slice(0, 10).map((item, i) => (
+						<p key={i} onClick={() => modelClickHandler(item)}>
 							<button>{item}</button>
 						</p>
 					))}
@@ -55,6 +61,8 @@ function NavBar({ photo }) {
 					id="search"
 					name="search"
 					placeholder="Search for products name"
+					value={search}
+					onChange={(e) => setSearch(e.target.value)}
 				/>
 			</div>
 			<div className="buttons">
@@ -125,16 +133,18 @@ function PopUp({ open, setOpen }) {
 	);
 }
 
-function SectionOfPop({ name }) {
-	return (
-		<section key={i}>
-			<h4>{name}</h4>
-			{array.map((item, i) => (
-				<button onClick={() => setValue(item)}>{item}</button>
-			))}
-		</section>
-	);
-}
+// function SectionOfPop({ name }) {
+// 	return (
+// 		<section key={i}>
+// 			<h4>{name}</h4>
+// 			{array.map((item, i) => (
+// 				<button key={i} onClick={() => setValue(item)}>
+// 					{item}
+// 				</button>
+// 			))}
+// 		</section>
+// 	);
+// }
 
 // function MessagePopUp() {
 // 	return (
