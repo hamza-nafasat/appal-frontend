@@ -4,12 +4,13 @@ import { IoLocationSharp } from "react-icons/io5";
 import { MdMessage } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { useAllCitiesQuery } from "../redux/api/productsApi";
 import { CategoriesObj } from "./txt";
 
 const Header = ({ city, setCity, setModel, search, setSearch }) => {
 	const { user } = useSelector((state) => state.userReducer);
 	const navigate = useNavigate("");
+	const urlParts = window.location.href.split("/");
+	const lastSection = urlParts[urlParts.length - 1];
 
 	return (
 		<header className="header">
@@ -20,50 +21,37 @@ const Header = ({ city, setCity, setModel, search, setSearch }) => {
 				setSearch={setSearch}
 				navigate={navigate}
 				city={city}
+				lastSection={lastSection}
 			/>
-			<Category navigate={navigate} setModel={setModel} />
+			<Category lastSection={lastSection} navigate={navigate} setModel={setModel} />
 		</header>
 	);
 };
 
 export default Header;
 
-function NavBar({ photo, city, setCity, search, setSearch, setModel }) {
-	const [open, setOpen] = useState(false);
-	const { data } = useAllCitiesQuery("");
-
-	const modelClickHandler = (item) => {
-		setCity(item);
-		setOpen(false);
-		navigate("/products/");
+function NavBar({ photo, city, setCity, search, setSearch, lastSection, navigate }) {
+	const locationClickHandler = (e) => {
+		setCity(e.target.value);
 	};
-	const locationClickHandler = () => {
-		setOpen(!open);
+	const navigateFunction = () => {
+		if (lastSection != "products-all") {
+			navigate("/products-all");
+		}
 	};
 	return (
 		<article className="navbar">
 			<Link to={"/"} className="logo">
 				<h3>Appal</h3>
 			</Link>
-			{/* <div onClick={locationClickHandler} className="cities">
-				<IoLocationSharp className="loc" />
-				<p>Location</p>
-				<IoIosArrowDown className="arr" style={{ overflowY: "auto" }} />
-				<div className="popup" style={{ display: open ? "flex" : "none" }}>
-					{data?.data?.map((item, i) => (
-						<p key={i} onClick={() => modelClickHandler(item)}>
-							<button>{item}</button>
-						</p>
-					))}
-				</div>
-			</div> */}
 			<div className="cities">
 				<IoLocationSharp className="loc" />
 				<input
 					type="text"
 					placeholder="Search by City"
 					value={city}
-					onChange={(e) => setCity(e.target.value)}
+					onChange={locationClickHandler}
+					onFocus={navigateFunction}
 				/>
 			</div>
 			<div className="searchBar">
@@ -75,6 +63,8 @@ function NavBar({ photo, city, setCity, search, setSearch, setModel }) {
 					placeholder="Search for products name"
 					value={search}
 					onChange={(e) => setSearch(e.target.value)}
+					onFocus={navigateFunction}
+					autoFocus={lastSection == "products-all" ? true : false}
 				/>
 			</div>
 			<div className="buttons">
@@ -88,16 +78,22 @@ function NavBar({ photo, city, setCity, search, setSearch, setModel }) {
 		</article>
 	);
 }
-function Category({ setModel }) {
+function Category({ setModel, navigate, lastSection }) {
 	const [open, setOpen] = useState(false);
 	const handleClick = (item) => {
 		setModel(item);
 		setOpen(false);
 	};
-
+	const handleClickForDiv = () => {
+		if (lastSection != "products-all") {
+			navigate("/products-all");
+		}
+		console.log(lastSection);
+		setOpen(!open);
+	};
 	return (
 		<article className="categories">
-			<Link to={""} className="list" onClick={() => setOpen(!open)}>
+			<Link to={""} className="list" onClick={handleClickForDiv}>
 				<p>
 					All Categories
 					<IoIosArrowDown />
@@ -133,19 +129,6 @@ function Category({ setModel }) {
 		</article>
 	);
 }
-
-// function SectionOfPop({ name }) {
-// 	return (
-// 		<section key={i}>
-// 			<h4>{name}</h4>
-// 			{array.map((item, i) => (
-// 				<button key={i} onClick={() => setValue(item)}>
-// 					{item}
-// 				</button>
-// 			))}
-// 		</section>
-// 	);
-// }
 
 // function MessagePopUp() {
 // 	return (

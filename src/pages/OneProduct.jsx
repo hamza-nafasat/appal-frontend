@@ -21,15 +21,16 @@ const OneProduct = () => {
 	const { user } = useSelector((state) => state.userReducer);
 	const [addToWishList, { data: msgData }] = useAddToWishListMutation();
 	const [bidOnProduct] = useBidOnProductMutation();
+
 	let currentUrl = window.location.href.split("/");
 	let productId = currentUrl[currentUrl.length - 1];
 	const { data, refetch } = useGetSingleProductQuery({ _id: productId });
 	useEffect(() => {
-		refetch();
 		if (data && data.data) {
 			setProduct(data.data.product);
 			setProductOwner(data.data.owner);
 		}
+		refetch();
 	}, [data]);
 
 	const sendMessage = () => {
@@ -55,8 +56,8 @@ const OneProduct = () => {
 	useEffect(() => {
 		user.wishList.map((productId) => {
 			if (productId == product?._id) return setRed(true);
+			refetch().unwrap();
 		});
-		refetch();
 	}, [msgData, product]);
 
 	const addToWishListHandler = async () => {

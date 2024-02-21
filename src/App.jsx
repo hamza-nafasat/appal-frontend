@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { userExist, userNotExist } from "./redux/reducers/userReducers";
 import { getUser } from "./redux/api/userApi";
 import ProtectedRoutes from "./components/ProtectedRoutes";
+import ProductsAll from "./pages/ProductsAll";
 
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
@@ -55,6 +56,7 @@ const App = () => {
 					>
 						<Route path="/" element={<Home />} />
 						<Route path="/products/:id" element={<Products />} />
+						<Route path="/products-all" element={<ProductsAll />} />
 						<Route path="/product/:id" element={<OneProduct />} />
 						<Route path="/sell/product" element={<SellProduct />} />
 						<Route path="/profile" element={<Profile />} />

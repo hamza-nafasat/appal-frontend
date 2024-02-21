@@ -6,22 +6,20 @@ import iphone from "../assets/icons/iphone.png";
 import mac from "../assets/icons/mac.png";
 import tab from "../assets/icons/tab.png";
 
-const AllCategories = () => {
-	const [category, setCategory] = useState("");
+const AllCategories = ({ setCategory }) => {
 	const handler = (val) => {
 		setCategory(val);
-		console.log(category);
 	};
 	return (
 		<article className="homeCategories">
-			<h2>All Categories</h2>
+			{/* <h2>All Categories</h2> */}
 			<section className="icons">
 				<IconSection image={iphone} txt={"Iphone"} handler={handler} />
-				<IconSection image={tab} txt={"Ipads"} handler={handler} />
+				<IconSection image={tab} txt={"Ipad"} handler={handler} />
 				<IconSection image={mac} txt={"Mackbook"} handler={handler} />
-				<IconSection image={airPods} txt={"Airpods"} handler={handler} />
-				<IconSection image={watches} txt={"Watches"} handler={handler} />
-				<IconSection image={homepods} txt={"Homepods"} handler={handler} />
+				<IconSection image={airPods} txt={"Airpod"} handler={handler} />
+				<IconSection image={watches} txt={"Watche"} handler={handler} />
+				<IconSection image={homepods} txt={"Homepod"} handler={handler} />
 			</section>
 		</article>
 	);
