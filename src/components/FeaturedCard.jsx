@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { FaRegHeart } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import { calculateTimeDifference } from "../utils/function";
-import { useAddToWishListMutation } from "../redux/api/userApi";
-import { useSelector } from "react-redux";
+import { getUser, useAddToWishListMutation } from "../redux/api/userApi";
+import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { serverUrl } from "../redux/store";
+import { userExist } from "../redux/reducers/userReducers";
 
 const FeaturedCard = ({ name, products, refetch }) => {
 	return (
@@ -27,29 +28,28 @@ export default FeaturedCard;
 
 export function SingleProduct({ product, refetch }) {
 	const [red, setRed] = useState(false);
-
+	const dispatch = useDispatch();
 	const { user } = useSelector((state) => state.userReducer);
-
 	const [addToWishList, { data: msgData }] = useAddToWishListMutation();
-
-	useEffect(() => {
-		user.wishList.map((productId) => {
-			if (productId == product._id) return setRed(true);
-		});
-	}, [msgData]);
 
 	const addToWishListHandler = async () => {
 		try {
 			const msgData = await addToWishList({ productId: product._id, _id: user._id }).unwrap();
 			toast.success(msgData.message);
-			if (refetch) {
-				refetch();
-			}
+			const data = await getUser(user?._id);
+			dispatch(userExist(data.data));
+			if (refetch) refetch();
 		} catch (error) {
 			console.error("Error placing bid:", error);
 			toast.error(error.data.message);
 		}
 	};
+	useEffect(() => {
+		if (refetch) refetch();
+		user.wishList.map((productId) => {
+			if (productId == product._id) return setRed(true);
+		});
+	}, [msgData, user]);
 	return (
 		<section className="singleProduct">
 			<Link to={`/product/${product._id}`}>

@@ -30,8 +30,6 @@ const ProductsAll = () => {
 	) : (
 		<div className="productPage">
 			<Header
-				category={category}
-				setCategory={setCategory}
 				city={city}
 				setCity={setCity}
 				search={search}
