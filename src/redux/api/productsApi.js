@@ -57,8 +57,19 @@ export const productsApi = createApi({
 			}),
 		}),
 		////
+		updateProduct: builder.mutation({
+			query: ({ formData, _id }) => ({
+				url: `/${_id}`,
+				method: "PUT",
+				body: formData,
+			}),
+		}),
+		////
 		deleteProduct: builder.mutation({
-			query: ({ _id }) => ({ url: `$_id}` }),
+			query: ({ _id }) => ({
+				url: `${_id}`,
+				method: "DELETE",
+			}),
 		}),
 	}),
 });
@@ -72,4 +83,6 @@ export const {
 	useAllUserAddsQuery,
 	useGetWishListQuery,
 	useCreateProductMutation,
+	useDeleteProductMutation,
+	useUpdateProductMutation,
 } = productsApi;

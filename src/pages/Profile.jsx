@@ -5,31 +5,41 @@ import { LuLogOut } from "react-icons/lu";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import toast from "react-hot-toast";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
+import { getUser, useEditProfileMutation } from "../redux/api/userApi";
+import { userExist } from "../redux/reducers/userReducers";
 
 const Profile = () => {
 	const { user } = useSelector((state) => state.userReducer);
 
-	const [name, setName] = useState(user.name);
-	const [primaryImg, setPrimaryImg] = useState(user.photo);
-	const [email] = useState(user.email);
-	const [number] = useState(user.number ? String(user.number) : "");
-	const [dob, setDob] = useState(String(user.dob) && "");
-	const [sinceMember] = useState(new Date(user.createdAt).getFullYear());
-	const [verified] = useState(user.isVerified);
-	const [secondaryImg] = useState("/src/assets/noProfile.jpg");
+	const [name, setName] = useState(user?.name);
+	const [primaryImg] = useState(user?.photo);
+	const [email] = useState(user?.email);
+	const [number] = useState(user?.number?.toString() || "");
+	const [dob, setDob] = useState(user?.dob?.split("T")?.[0] || "");
+	const [sinceMember] = useState(new Date(user?.createdAt).getFullYear());
+	const [verified] = useState(user?.isVerified);
 
-	const handlePrimaryImageError = (error) => {
-		if (error) setPrimaryImg(secondaryImg);
-		else console.error("Error loading primary image:", error);
+	const [updateUser] = useEditProfileMutation();
+
+	const handelVErification = (e) => {
+		e.preventDefault();
 	};
-
-	const handleSendCode = () => {};
-
 	const submitHandler = (e) => {
 		e.preventDefault();
-		console.log(dob);
+		if (user) {
+			updateUser({ name, dob, _id: user._id })
+				.unwrap()
+				.then((response) => {
+					console.log(response);
+					toast.success(response.message);
+				})
+				.catch((error) => {
+					toast.error(error.data.message);
+					console.log(error);
+				});
+		}
 	};
 	const logoutHandler = async () => {
 		try {
@@ -50,7 +60,7 @@ const Profile = () => {
 				<article className="update">
 					<section className="img">
 						<img
-							src={primaryImg}
+							src={primaryImg || "/src/assets/noProfile.jpg"}
 							alt="userProfile"
 							onError={(error) => handlePrimaryImageError(error)}
 						/>
@@ -61,7 +71,7 @@ const Profile = () => {
 					</section>
 					<section className="details">
 						<h2>Edit Profile</h2>
-						<form onSubmit={submitHandler}>
+						<form>
 							<p className="name">
 								<label>Name</label>
 								<input
@@ -98,9 +108,11 @@ const Profile = () => {
 									<input type="text" value={"Account Verified"} disabled />
 								</p>
 							) : (
-								<button onClick={handleSendCode}>Verified Your Account</button>
+								<button onClick={handelVErification}>Verified Your Account</button>
 							)}
-							<button type="submit">Save Changes</button>
+							<button type="submit" onClick={submitHandler}>
+								Save Changes
+							</button>
 						</form>
 					</section>
 				</article>

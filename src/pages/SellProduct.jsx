@@ -1,81 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import { useCreateProductMutation } from "../redux/api/productsApi";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
-
-export const categories = ["iphone", "ipad", "airpod", "mackbook", "watche", "homepod"];
-
-export const CategoriesObj = {
-	iphone: [
-		"iPhone 15 Pro Max",
-		"iPhone 15 Pro",
-		"iPhone 15 Plus",
-		"iPhone 15",
-		"iPhone 14 Pro Max",
-		"iPhone 14 Pro",
-		"iPhone 14 Plus",
-		"iPhone 14",
-		"iPhone 13 Pro Max",
-		"iPhone 13 Pro",
-		"iPhone 13 mini",
-		"iPhone 13",
-		"iPhone 12 Pro Max",
-		"iPhone 12 Pro",
-		"iPhone 12 mini",
-		"iPhone 12",
-		"iPhone SE ",
-		"iPhone 11 Pro Max",
-		"iPhone 11 Pro",
-		"iPhone 11",
-		"iPhone XR",
-		"iPhone XS Max",
-		"iPhone XS",
-		"iPhone X",
-		"iPhone 8 Plus",
-		"iPhone 8",
-		"iPhone 7 Plus",
-		"iPhone 7",
-		"iPhone 6S Plus",
-		"iPhone 6S",
-		"iPhone 6 Plus",
-		"iPhone 6",
-	],
-	ipad: ["AirPods Gen1", "AirPods Gen2", "AirPods Gen3", "AirPods Pro", "AirPods Max"],
-	airpod: ["AirPods Gen1", "AirPods Gen2", "AirPods Gen3", "AirPods Pro", "AirPods Max"],
-	mackbook: [
-		"MacBook Pro 14-inch (M2 Pro)",
-		"MacBook Pro 14-inch (M2 Max)",
-		"MacBook Pro 16-inch (M2 Pro)",
-		"MacBook Pro 16-inch (M2 Max)",
-		"MacBook Air (M2)",
-		"MacBook Pro 13-inch (M1, 2020)",
-		"MacBook Air (M1, 2020)",
-		"MacBook Pro 16-inch (Intel, 2019)",
-		"MacBook Pro 13-inch (Intel, 2019)",
-		"MacBook Air (Intel, 2018)",
-		"MacBook 12-inch (Intel, 2017)",
-	],
-	watche: [
-		"Apple Watch Series 8 (GPS)",
-		"Apple Watch Series 8 (Cellular)",
-		"Apple Watch Series 8 Nike",
-		"Apple Watch Series 8 (Hermes)",
-		"Apple Watch SE (GPS)",
-		"Apple Watch SE (Cellular)",
-		"Apple Watch Series 7 (2021)",
-		"Apple Watch Series 6 (2020)",
-		"Apple Watch SE (2020)",
-		"Apple Watch Series 5 (2019)",
-		"Apple Watch Series 4 (2018)",
-		"Apple Watch Series 3 (2017)",
-	],
-	homepod: ["HomePod mini", "HomePod"],
-};
+import { Country, State, City } from "country-state-city";
+import { CategoriesObj, categories } from "../components/txt";
 
 const SellProduct = () => {
-	const [location, setLocation] = useState("");
-	const [address, setAddress] = useState("");
+	const [countries, setCountries] = useState([]);
+	const [states, setStates] = useState([]);
+	const [cities, setCities] = useState([]);
+	const [selectedCity, setSelectedCity] = useState("");
+	const [selectedState, setSelectedState] = useState("");
+	const [selectedCountry, setSelectedCountry] = useState("");
+
 	const [condition, setCondition] = useState("");
 	const [minPrice, setMinPrice] = useState("");
 	const [status, setStatus] = useState("available");
@@ -85,23 +23,25 @@ const SellProduct = () => {
 	const [modal, setModal] = useState("");
 	const [selectedImages, setSelectedImages] = useState([]);
 	const [showedImage, setShowedImage] = useState(null);
-	const { user } = useSelector((state) => (state) => state.userReducer);
-
-	const [createProduct, { isLoading, isSuccess, isError, error }] = useCreateProductMutation();
-	const handleImageChange = (event) => {
-		const file = event.target.files[0];
+	// get user and create product
+	const { user } = useSelector((state) => state.userReducer);
+	const [createProduct] = useCreateProductMutation();
+	// handler image change to set and show image
+	const handleImageChange = (e) => {
+		const file = e.target.files[0];
 		if (file) {
 			setShowedImage(file);
 			setSelectedImages((prevImages) => [...prevImages, file]);
 		}
 	};
-
+	// form submit and create a product
 	const submitHandlerForAll = () => {
-		console.log(selectedImages);
+		const countryName = Country.getCountryByCode(selectedCountry).name;
+		const stateName = State.getStateByCodeAndCountry(selectedState, selectedCountry).name;
 		const formData = new FormData();
 		selectedImages.forEach((file) => formData.append("photos", file));
-		formData.append("city", location);
-		formData.append("address", address);
+		formData.append("city", selectedCity);
+		formData.append("address", `${selectedCity}, ${stateName}, ${countryName}`);
 		formData.append("condition", condition);
 		formData.append("minPrice", minPrice);
 		formData.append("maxPrice", maxPrice);
@@ -114,32 +54,46 @@ const SellProduct = () => {
 			.then((response) => {
 				toast.success(response.message);
 				console.log("Product created successfully", response);
-				setAddress("");
-				setCategory("");
-				setCondition("");
-				setDescription("");
-				setMaxPrice(""), setMinPrice("");
-				setModal("");
-				setLocation("");
-				setSelectedImages([]);
-				setLocation("");
+				formReset();
 			})
 			.catch((error) => {
 				console.error("Error creating product:", error);
 				toast.error(error.data.message);
 			});
 	};
-
-	const handleCategoryChange = (event) => {
-		setCategory(event.target.value);
+	const handleCategoryChange = (e) => {
+		setCategory(e.target.value);
 		setModal("");
 	};
-	const handleModelChange = (event) => {
-		setModal(event.target.value);
+	const handleCountryChange = async (countryCode) => {
+		const statesData = await State.getStatesOfCountry(countryCode);
+		setStates(statesData);
+		setCities([]);
+		setSelectedCountry(countryCode);
 	};
-	const attachFileHandler = () => {
-		const fileInput = document.getElementById("image");
-		fileInput.click();
+	const handleStateChange = async (stateCode) => {
+		const citiesData = await City.getCitiesOfState(selectedCountry, stateCode);
+		console.log(citiesData);
+		setCities(citiesData);
+		setSelectedState(stateCode);
+	};
+	// useEffect for getting all countries when page loaded
+	useEffect(() => {
+		setCountries(Country.getAllCountries());
+	}, []);
+	const formReset = () => {
+		setCategory("");
+		setCondition("");
+		setDescription("");
+		setMaxPrice("");
+		setMinPrice("");
+		setModal("");
+		setSelectedImages([]);
+		setCities([]);
+		setStates([]);
+		setSelectedCity("");
+		setSelectedCountry("");
+		setSelectedState("");
 		setShowedImage(null);
 	};
 	return (
@@ -159,22 +113,62 @@ const SellProduct = () => {
 							>
 								<option value="">category</option>
 								{categories.map((category) => (
-									<option key={category} value={category}>
+									<option key={category.toLowerCase()} value={category}>
 										{category}
 									</option>
 								))}
 							</select>
 						</p>
-						<p className="location half">
-							<label htmlFor="location">Location</label>
-							<input
-								type="text"
-								name="location"
-								id="location"
-								placeholder="Enter Your Location"
-								value={location}
-								onChange={(e) => setLocation(e.target.value)}
-							/>
+						<p className="model half">
+							<label htmlFor="model">Model</label>
+							<select
+								id="model"
+								name="model"
+								value={modal}
+								onChange={(e) => setModal(e.target.value)}
+							>
+								<option value="">Choose a model</option>
+								{category &&
+									CategoriesObj[category].map((model, i) => (
+										<option key={i} value={model.toLowerCase()}>
+											{model}
+										</option>
+									))}
+							</select>
+						</p>
+						<p className="country half">
+							<label htmlFor="country">Country</label>
+							<label htmlFor="country">Country</label>
+							<select id="country" onChange={(e) => handleCountryChange(e.target.value)}>
+								<option value="">Select Country</option>
+								{countries.map((country) => (
+									<option key={country.isoCode} value={country.isoCode}>
+										{country.name}
+									</option>
+								))}
+							</select>
+						</p>
+						<p className="state half">
+							<label htmlFor="state">State</label>
+							<select id="state" onChange={(e) => handleStateChange(e.target.value)}>
+								<option value="">Select State</option>
+								{states.map((state) => (
+									<option key={state.isoCode} value={state.isoCode}>
+										{state.name}
+									</option>
+								))}
+							</select>
+						</p>
+						<p className="city full">
+							<label htmlFor="city">City</label>
+							<select id="city" onChange={(e) => setSelectedCity(e.target.value)}>
+								<option value="">Select City</option>
+								{cities.map((city) => (
+									<option key={city.name} value={city.name}>
+										{city.name}
+									</option>
+								))}
+							</select>
 						</p>
 						<p className="condition full">
 							<label htmlFor="condition">Condition</label>
@@ -187,19 +181,21 @@ const SellProduct = () => {
 								<option value="">Select Condition</option>
 								<option value="new">New</option>
 								<option value="used">Used</option>
-								<option value="refurbish">Refurbish</option>
+								<option value="refurbished">Refurbished</option>
 							</select>
 						</p>
-						<p className="model full">
-							<label htmlFor="model">Model</label>
-							<select id="model" name="model" value={modal} onChange={handleModelChange}>
-								<option value="">Choose a model</option>
-								{category &&
-									CategoriesObj[category].map((model, i) => (
-										<option key={i} value={model}>
-											{model}
-										</option>
-									))}
+						<p className="status full">
+							<label htmlFor="status">Status</label>
+							<select
+								name="status"
+								id="status"
+								value={status}
+								onChange={(e) => setStatus(e.target.value)}
+							>
+								<option value="">Select Status</option>
+								<option value="available">Available</option>
+								<option value="paused">Paused</option>
+								<option value="sold">Sold</option>
 							</select>
 						</p>
 						<p className="minPrice half">
@@ -224,17 +220,6 @@ const SellProduct = () => {
 								onChange={(e) => setMaxPrice(e.target.value)}
 							/>
 						</p>
-						<p className="address full">
-							<label htmlFor="address">Full Address</label>
-							<input
-								type="text"
-								name="address"
-								id="address"
-								value={address}
-								placeholder="Enter you address"
-								onChange={(e) => setAddress(e.target.value)}
-							/>
-						</p>
 						<p className="description full">
 							<label htmlFor="description">Description</label>
 							<textarea
@@ -256,11 +241,11 @@ const SellProduct = () => {
 						}}
 						type="file"
 						id="image"
-						accept="image/png, image/jpeg, image/webp"
+						accept="image/png, image/jpeg, image/webp, image/jpg"
 						onChange={handleImageChange}
 					/>
 					<button
-						onClick={attachFileHandler}
+						onClick={() => document.getElementById("image").click()}
 						style={{ alignSelf: "flex-start", padding: ".5rem 0", fontSize: "1rem" }}
 					>
 						Attach Files
@@ -272,7 +257,7 @@ const SellProduct = () => {
 							className="image-preview"
 						/>
 					) : (
-						<img src={"/src/assets/noimage.jpg"} alt="Preview" className="image-preview" />
+						<img src={"/src/assets/noImage.jpg"} alt="Preview" className="image-preview" />
 					)}
 					<button type="submit" onClick={submitHandlerForAll}>
 						Post Add

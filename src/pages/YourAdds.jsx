@@ -1,18 +1,18 @@
 import React from "react";
-import Header from "../components/Header";
-import ProfileHeader from "../components/profileHeader";
+import toast from "react-hot-toast";
 import { FiEdit } from "react-icons/fi";
 import { GoTrash } from "react-icons/go";
-import { Link } from "react-router-dom";
-import { useAllUserAddsQuery, useGetSingleProductQuery } from "../redux/api/productsApi";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import Header from "../components/Header";
+import ProfileHeader from "../components/profileHeader";
+import { useAllUserAddsQuery, useDeleteProductMutation } from "../redux/api/productsApi";
+import { serverUrl } from "../redux/store";
 import { calculateTimeDifference } from "../utils/function";
-import Loader from "../components/Loader";
 
 const YourAdds = () => {
 	const { user } = useSelector((state) => state.userReducer);
-	const { data } = useAllUserAddsQuery({ userId: user._id });
-	console.log(data);
+	const { data, refetch } = useAllUserAddsQuery({ userId: user._id });
 	return (
 		<div className="yourAddsPage">
 			<Header />
@@ -20,7 +20,7 @@ const YourAdds = () => {
 				<ProfileHeader />
 				<article className="allAdds">
 					{data?.data?.map((product, i) => (
-						<OneAdd key={i} product={product} />
+						<OneAdd refetch={refetch} key={i} product={product} />
 					))}
 				</article>
 			</main>
@@ -30,20 +30,34 @@ const YourAdds = () => {
 
 export default YourAdds;
 
-export function OneAdd({ wish, product }) {
+export function OneAdd({ wish, product, refetch }) {
+	const [deleteProduct] = useDeleteProductMutation();
+	const deleteHandler = (_id) => {
+		deleteProduct({ _id })
+			.unwrap()
+			.then((response) => {
+				toast.success(response.message);
+				console.log("Product created successfully", response);
+				refetch();
+			})
+			.catch((error) => {
+				console.error("Error creating product:", error);
+				toast.error(error.data.message);
+			});
+	};
 	return (
 		<section className="oneAdd">
 			<Link to={`/product/${product?._id}`}>
-				<img src={product?.photos?.[0]} alt={product?.name} />
+				<img src={`${serverUrl}/${product?.photos?.[0]}`} alt={product?.name} />
 			</Link>
 			<div className="details">
 				<div className="editDel" style={{ display: wish ? "none" : "flex" }}>
-					<Link to={"/edit/product"}>
+					<Link to={`/edit/product/${product?._id}`}>
 						<FiEdit />
 					</Link>
-					<GoTrash />
+					<GoTrash onClick={() => deleteHandler(product?._id)} />
 				</div>
-				<p>RS {product?.price}/-</p>
+				<p>RS {product?.maxPrice}/-</p>
 				<p>{product?.model}</p>
 				<p>{product?.city}</p>
 				<p>{calculateTimeDifference(product?.createdAt)}</p>

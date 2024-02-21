@@ -23,6 +23,17 @@ export const userApi = createApi({
 				},
 			}),
 		}),
+		////
+		editProfile: builder.mutation({
+			query: ({ name, dob, _id }) => ({
+				url: `/update?_id=${_id}`,
+				method: "PUT",
+				body: {
+					name,
+					dob,
+				},
+			}),
+		}),
 	}),
 });
 
@@ -37,4 +48,4 @@ export const getUser = async (_id) => {
 	}
 };
 
-export const { useLoginMutation, useAddToWishListMutation } = userApi;
+export const { useLoginMutation, useAddToWishListMutation, useEditProfileMutation } = userApi;

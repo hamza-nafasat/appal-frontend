@@ -5,6 +5,7 @@ import { calculateTimeDifference } from "../utils/function";
 import { useAddToWishListMutation } from "../redux/api/userApi";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
+import { serverUrl } from "../redux/store";
 
 const FeaturedCard = ({ name, products, refetch }) => {
 	return (
@@ -53,8 +54,7 @@ export function SingleProduct({ product, refetch }) {
 		<section className="singleProduct">
 			<Link to={`/product/${product._id}`}>
 				<img
-					// `${serverUrl}/${product.photos[0]}`
-					src={`${product.photos[0]}` || "/src/assets/noImage.jpg"}
+					src={`${serverUrl}/${product.photos[0]}` || "/src/assets/noImage.jpg"}
 					alt={`${product.name}`}
 				/>
 			</Link>

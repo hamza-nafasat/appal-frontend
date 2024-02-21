@@ -10,7 +10,7 @@
 		.allAdds {
 			// border: 1px solid red;
 			width: 100%;
-			@include flex(row, space-between, center, 2rem, wrap);
+			@include flex(row, unset, center, 4.5rem, wrap);
 		}
 	}
 }

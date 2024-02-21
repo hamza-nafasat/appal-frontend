@@ -5,26 +5,27 @@ import { IoCall } from "react-icons/io5";
 import { useBidOnProductMutation, useGetSingleProductQuery } from "../redux/api/productsApi";
 import Loader from "../components/Loader";
 import { calculateTimeDifference } from "../utils/function";
-import { getUser } from "../redux/api/userApi";
+import { getUser, useAddToWishListMutation } from "../redux/api/userApi";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
+import { serverUrl } from "../redux/store";
 
 const OneProduct = () => {
+	const [red, setRed] = useState(false);
 	const [product, setProduct] = useState();
 	const [productOwner, setProductOwner] = useState();
 	const [price, setPrice] = useState(product?.minPrice.toString() || "");
 	const [description, setDescription] = useState("");
 	const [openPopUp, setOpenPopUp] = useState(false);
+
 	const { user } = useSelector((state) => state.userReducer);
-
-	const [bidOnProduct, { data: bidData, isLoading, isSuccess, isError, error }] =
-		useBidOnProductMutation();
-
+	const [addToWishList, { data: msgData }] = useAddToWishListMutation();
+	const [bidOnProduct] = useBidOnProductMutation();
 	let currentUrl = window.location.href.split("/");
 	let productId = currentUrl[currentUrl.length - 1];
-
 	const { data, refetch } = useGetSingleProductQuery({ _id: productId });
 	useEffect(() => {
+		refetch();
 		if (data && data.data) {
 			setProduct(data.data.product);
 			setProductOwner(data.data.owner);
@@ -37,9 +38,9 @@ const OneProduct = () => {
 	const placeBid = async () => {
 		try {
 			const result = await bidOnProduct({
-				productId: productId.toString(),
-				userId: user._id.toString(),
-				price: price.toString(),
+				productId: productId?.toString(),
+				userId: user?._id.toString(),
+				price: price?.toString(),
 				description,
 			}).unwrap();
 			refetch();
@@ -51,7 +52,25 @@ const OneProduct = () => {
 		}
 	};
 
-	const addToWishList = () => {};
+	useEffect(() => {
+		user.wishList.map((productId) => {
+			if (productId == product?._id) return setRed(true);
+		});
+		refetch();
+	}, [msgData, product]);
+
+	const addToWishListHandler = async () => {
+		try {
+			const msgData = await addToWishList({ productId: product._id, _id: user._id }).unwrap();
+			toast.success(msgData.message);
+			if (refetch) {
+				refetch();
+			}
+		} catch (error) {
+			console.error("Error placing bid:", error);
+			toast.error(error.data.message);
+		}
+	};
 
 	return !product ? (
 		<Loader />
@@ -60,11 +79,14 @@ const OneProduct = () => {
 			<Header />
 			<main>
 				<article className="first">
-					<img src={product?.photos[0] || "/src/assets/noImage.jpg"} alt="product-image" />
+					<img
+						src={`${serverUrl}/${product.photos[0]}` || "/src/assets/noImage.jpg"}
+						alt="product-image"
+					/>
 					<section className="details">
 						<p>RS {product.maxPrice}/-</p>
 						<p className="abs">{calculateTimeDifference(product.createdAt)}</p>
-						<FaRegHeart onClick={addToWishList} />
+						<FaRegHeart onClick={addToWishListHandler} color={red ? "#FF0000" : ""} />
 					</section>
 					<section className="mainDetails">
 						<div>
@@ -149,8 +171,7 @@ export default OneProduct;
 
 function BidsComponent({ item, user }) {
 	const [newUser, setNewUser] = useState(false);
-	// console.log("user", user);
-	// console.log("item", item);
+
 	useEffect(() => {
 		(async () => {
 			const data = await getUser(item.userId);

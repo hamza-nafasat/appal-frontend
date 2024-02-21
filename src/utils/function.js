@@ -15,7 +15,7 @@ export function calculateTimeDifference(productCreatedAt) {
 	const timeDiffYears = Math.floor(timeDiffDays / 365);
 
 	if (timeDiffDays < 1) {
-		return "less than a day ago";
+		return "today";
 	} else if (timeDiffDays === 1) {
 		return "1 day ago";
 	} else if (timeDiffDays < 7) {

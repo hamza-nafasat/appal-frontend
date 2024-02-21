@@ -27,10 +27,8 @@ const App = () => {
 			if (user) {
 				const data = await getUser(user.uid);
 				dispatch(userExist(data.data));
-				// console.log("LOGIN");
 			} else {
 				dispatch(userNotExist());
-				// console.log("NOT LOGIN");
 			}
 		});
 	}, []);
@@ -62,7 +60,7 @@ const App = () => {
 						<Route path="/profile" element={<Profile />} />
 						<Route path="/profile/adds" element={<YourAdds />} />
 						<Route path="/profile/wishlist" element={<YourWishList />} />
-						<Route path="/edit/product" element={<EditProduct />} />
+						<Route path="/edit/product/:id" element={<EditProduct />} />
 					</Route>
 				</Routes>
 			</Suspense>

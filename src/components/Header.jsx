@@ -1,32 +1,35 @@
-import { useEffect, useState } from "react";
-import { IoIosSearch } from "react-icons/io";
+import { useState } from "react";
+import { IoIosArrowDown, IoIosArrowUp, IoIosSearch } from "react-icons/io";
 import { IoLocationSharp } from "react-icons/io5";
-import { Link, useNavigate } from "react-router-dom";
 import { MdMessage } from "react-icons/md";
-import { IoIosArrowDown } from "react-icons/io";
-import { IoIosArrowUp } from "react-icons/io";
 import { useSelector } from "react-redux";
-import { CategoriesObj, cities } from "./txt";
+import { Link, useNavigate } from "react-router-dom";
 import { useAllCitiesQuery } from "../redux/api/productsApi";
+import { CategoriesObj } from "./txt";
 
-const Header = ({ city, setCity, setCategory, category, model, setModel, search, setSearch }) => {
-	const { user, loading } = useSelector((state) => state.userReducer);
+const Header = ({ city, setCity, setModel, search, setSearch }) => {
+	const { user } = useSelector((state) => state.userReducer);
 	const navigate = useNavigate("");
 
 	return (
 		<header className="header">
-			<NavBar photo={user?.photo} setCity={setCity} search={search} setSearch={setSearch} />
-			<Category />
+			<NavBar
+				photo={user?.photo || ""}
+				setCity={setCity}
+				search={search}
+				setSearch={setSearch}
+				navigate={navigate}
+				city={city}
+			/>
+			<Category navigate={navigate} setModel={setModel} />
 		</header>
 	);
 };
 
 export default Header;
 
-function NavBar({ photo, setCity, search, setSearch, setModel }) {
-	// photo = undefined;
+function NavBar({ photo, city, setCity, search, setSearch, setModel }) {
 	const [open, setOpen] = useState(false);
-	const [value, setValue] = useState("");
 	const { data } = useAllCitiesQuery("");
 
 	const modelClickHandler = (item) => {
@@ -42,17 +45,26 @@ function NavBar({ photo, setCity, search, setSearch, setModel }) {
 			<Link to={"/"} className="logo">
 				<h3>Appal</h3>
 			</Link>
-			<div onClick={locationClickHandler} className="cities">
+			{/* <div onClick={locationClickHandler} className="cities">
 				<IoLocationSharp className="loc" />
 				<p>Location</p>
-				<IoIosArrowDown className="arr" />
+				<IoIosArrowDown className="arr" style={{ overflowY: "auto" }} />
 				<div className="popup" style={{ display: open ? "flex" : "none" }}>
-					{data?.data?.slice(0, 10).map((item, i) => (
+					{data?.data?.map((item, i) => (
 						<p key={i} onClick={() => modelClickHandler(item)}>
 							<button>{item}</button>
 						</p>
 					))}
 				</div>
+			</div> */}
+			<div className="cities">
+				<IoLocationSharp className="loc" />
+				<input
+					type="text"
+					placeholder="Search by City"
+					value={city}
+					onChange={(e) => setCity(e.target.value)}
+				/>
 			</div>
 			<div className="searchBar">
 				<IoIosSearch />
@@ -67,11 +79,7 @@ function NavBar({ photo, setCity, search, setSearch, setModel }) {
 			</div>
 			<div className="buttons">
 				<Link to={"/profile"}>
-					<img
-						src={photo ? photo : "/src/assets/noProfile.jpg"}
-						alt="user dp"
-						onError={(error) => picError(error)}
-					/>
+					<img src={photo ? photo : "/src/assets/noProfile.jpg"} alt="user dp" />
 				</Link>
 				<Link className={"sell"} to={"/sell/product"}>
 					sell
@@ -80,8 +88,13 @@ function NavBar({ photo, setCity, search, setSearch, setModel }) {
 		</article>
 	);
 }
-function Category() {
+function Category({ setModel }) {
 	const [open, setOpen] = useState(false);
+	const handleClick = (item) => {
+		setModel(item);
+		setOpen(false);
+	};
+
 	return (
 		<article className="categories">
 			<Link to={""} className="list" onClick={() => setOpen(!open)}>
@@ -95,41 +108,29 @@ function Category() {
 				<p>Watches</p>
 				<p>Airpods</p>
 				<p>Homepods</p>
-				<PopUp open={open} setOpen={setOpen} />
+				<div className="mainPopUp" style={{ display: open ? "flex" : "none" }}>
+					<section>
+						<h4>
+							All Categories
+							<IoIosArrowUp />
+						</h4>
+					</section>
+					{Object.entries(CategoriesObj).map(([category, items]) => (
+						<section key={category}>
+							<h4>{category}</h4>
+							{items.map((item, index) => (
+								<button key={index} onClick={() => handleClick(item)}>
+									{item}
+								</button>
+							))}
+						</section>
+					))}
+				</div>
 			</Link>
 			<button className="msg">
 				<MdMessage />
 			</button>
 		</article>
-	);
-}
-
-function PopUp({ open, setOpen }) {
-	const [value, setValue] = useState("");
-	const handleClick = (item) => {
-		setValue(item);
-		setOpen(false);
-	};
-
-	return (
-		<div className="mainPopUp" style={{ display: open ? "flex" : "none" }}>
-			<section>
-				<h4>
-					All Categories
-					<IoIosArrowUp />
-				</h4>
-			</section>
-			{Object.entries(CategoriesObj).map(([category, items]) => (
-				<section key={category}>
-					<h4>{category}</h4>
-					{items.map((item, index) => (
-						<button key={index} onClick={() => handleClick(item)}>
-							{item}
-						</button>
-					))}
-				</section>
-			))}
-		</div>
 	);
 }
 

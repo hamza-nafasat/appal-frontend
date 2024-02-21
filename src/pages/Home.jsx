@@ -10,13 +10,12 @@ const Home = () => {
 	const [category, setCategory] = useState("");
 	// getting data from backend
 	const { data, isError, isLoading, refetch } = useLatestProductQuery();
-	const handler = (val) => {
-		setCategory(val);
-		console.log(category);
-	};
 	if (isError) {
 		toast.error("Error During Fetching Data From Server");
 	}
+	useEffect(() => {
+		refetch();
+	}, []);
 	return isLoading ? (
 		<Loader />
 	) : (

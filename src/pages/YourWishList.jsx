@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import Header from "../components/Header";
 import ProfileHeader from "../components/profileHeader";
@@ -8,7 +8,10 @@ import Loader from "../components/Loader";
 import { SingleProduct } from "../components/FeaturedCard";
 const YourWishList = () => {
 	const { user } = useSelector((state) => state.userReducer);
-	const { data, isLoading, isError } = useGetWishListQuery({ wishlists: user?.wishList });
+	const { data, isLoading, isError, refetch } = useGetWishListQuery({ wishlists: user?.wishList });
+	useEffect(() => {
+		refetch();
+	}, []);
 	return isLoading ? (
 		<Loader />
 	) : (
