@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaRegHeart } from "react-icons/fa6";
-import { Link } from "react-router-dom";
+import { Link, redirect, useNavigate } from "react-router-dom";
 import { calculateTimeDifference } from "../utils/function";
 import { getUser, useAddToWishListMutation } from "../redux/api/userApi";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,11 +9,13 @@ import { serverUrl } from "../redux/store";
 import { userExist } from "../redux/reducers/userReducers";
 
 const FeaturedCard = ({ name, products, refetch }) => {
+	const navigate = useNavigate();
 	return (
 		<article className="productsArticle">
 			<header>
 				<h2>{name}</h2>
-				<Link to={`/products/${name}`}>See All</Link>
+				{/* <Link to={`/products/${name}`}>See All</Link> */}
+				<button onClick={() => navigate("/products-all")}>See All</button>
 			</header>
 			<main>
 				{products.map((product, i) => (
@@ -45,7 +47,6 @@ export function SingleProduct({ product, refetch }) {
 		}
 	};
 	useEffect(() => {
-		if (refetch) refetch();
 		user.wishList.map((productId) => {
 			if (productId == product._id) return setRed(true);
 		});

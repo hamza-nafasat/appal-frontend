@@ -1,4 +1,4 @@
-import { signOut, RecaptchaVerifier, getAuth, signInWithPhoneNumber } from "firebase/auth";
+import { signOut, RecaptchaVerifier, signInWithPhoneNumber, PhoneAuthProvider } from "firebase/auth";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { BsFillShieldLockFill, BsTelephoneFill } from "react-icons/bs";
@@ -88,7 +88,6 @@ const Profile = () => {
 			});
 	};
 	const otpVerificationHandler = () => {
-		const user = auth.currentUser;
 		setLoading(true);
 		window.confirmationResult
 			.confirm(otp)
@@ -97,16 +96,6 @@ const Profile = () => {
 				console.log(response);
 				toast.success("Successfully Verified");
 				setOpenPop(false);
-				user.linkWithCredential(credential)
-					.then((usercred) => {
-						const user = usercred.user;
-						console.log("Phone number linked", user);
-						toast.success("Phone number linked successfully");
-					})
-					.catch((error) => {
-						console.log("Error linking phone number", error);
-						toast.error("Error linking phone number");
-					});
 			})
 			.catch((error) => {
 				console.log("error while otp verification", error);
@@ -115,40 +104,37 @@ const Profile = () => {
 			});
 	};
 
-	const linkPhoneNumber = (phoneNumber, appVerifier) => {
-		const user = firebase.auth().currentUser;
-		if (user) {
-			signInWithPhoneNumber(auth, phoneNumber, appVerifier)
-				.then((confirmationResult) => {
-					// Prompt the user for the OTP
-					const otp = prompt("Please enter the OTP");
-					// Create a credential with the verification ID and the OTP
-					const credential = PhoneAuthProvider.credential(
-						confirmationResult.verificationId,
-						otp
-					);
-					// Link the phone number to the current user
-					user.linkWithCredential(credential)
-						.then((usercred) => {
-							// The user object after the phone number is linked
-							const user = usercred.user;
-							console.log("Phone number linked", user);
-							toast.success("Phone number linked successfully");
-						})
-						.catch((error) => {
-							console.log("Error linking phone number", error);
-							toast.error("Error linking phone number");
-						});
-				})
-				.catch((error) => {
-					console.log("Error during signInWithPhoneNumber", error);
-					toast.error("Error sending OTP");
-				});
-		} else {
-			console.log("No user signed in to link phone number");
-			toast.error("No user signed in");
-		}
-	};
+	// const otpVerificationHandler = () => {
+	// 	const currentUser = auth.currentUser;
+	// 	setLoading(true);
+	// 	window.confirmationResult
+	// 		.confirm(otp)
+	// 		.then(async (response) => {
+	// 			// Create the credential from the verification ID and the OTP
+	// 			const credential = PhoneAuthProvider.credential(response.verificationId, otp);
+	// 			// Link the phone number to the current user
+	// 			currentUser
+	// 				.linkWithPhoneNumber(credential)
+	// 				.then((usercred) => {
+	// 					const newUser = usercred.user;
+	// 					console.log("Phone number linked", newUser);
+	// 					toast.success("Phone number linked successfully");
+	// 				})
+	// 				.catch((error) => {
+	// 					console.error("Error linking phone number", error);
+	// 					toast.error("Error linking phone number");
+	// 				});
+	// 			setLoading(false);
+	// 			toast.success("Successfully Verified");
+	// 			setOpenPop(false);
+	// 		})
+	// 		.catch((error) => {
+	// 			console.error("error while otp verification", error);
+	// 			toast.error("Please Enter a Correct OTP");
+	// 			setLoading(false);
+	// 		});
+	// };
+
 	return !user ? (
 		<Loader />
 	) : (
@@ -265,57 +251,3 @@ const Profile = () => {
 };
 
 export default Profile;
-
-// function initializeRecaptcha() {
-//     if (!window.recaptchaVerifier) {
-//         window.recaptchaVerifier = new grecaptcha.Renderer('div#recaptcha-container', {
-//             size: 'invisible',
-//             callback: (response) => {
-//                 console.log("Recaptcha verified", response);
-//             },
-//         });
-//     }
-// }
-
-// function generateOTP() {
-//     setLoading(true);
-//     initializeRecaptcha(); // Move initialization here
-//     const appVerifier = window.recaptchaVerifier;
-//     signInWithPhoneNumber(auth, `+${phoneNumber}`, appVerifier)
-//         .then((confirmationResult) => {
-//             window.confirmationResult = confirmationResult;
-//             setShowOtp(true);
-//             setLoading(false);
-//             toast.success("OTP Sended Successfully");
-//         })
-//         .catch((error) => {
-//             console.log("Error during generating otp", error);
-//             setLoading(false);
-//         });
-// }
-
-// function verifyOTP() {
-//     setLoading(true);
-//     window.confirmationResult
-//         .confirm(otp)
-//         .then(async (response) => {
-//             setLoading(false);
-//             console.log(response);
-//             toast.success("Successfully Verified");
-//             setOpenPop(false);
-//             const user = auth.currentUser;
-//             await user.linkWithCredential(credential).then((usercred) => {
-//                 const user = usercred.user;
-//                 console.log("Phone number linked", user);
-//                 toast.success("Phone number linked successfully");
-//             }).catch((error) => {
-//                 console.log("Error linking phone number", error);
-//                 toast.error("Error linking phone number");
-//             });
-//         })
-//         .catch((error) => {
-//             console.log("error while otp verification", error);
-//             toast.error("Please Enter a Correct OTP");
-//             setLoading(false);
-//         });
-// }
