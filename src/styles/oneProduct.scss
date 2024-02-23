@@ -115,6 +115,7 @@
 					position: absolute;
 					top: 0;
 					left: 0;
+					z-index: 50;
 					background-color: rgb(255, 255, 210);
 					width: 100%;
 					height: 100%;
@@ -173,6 +174,7 @@
 						width: 98%;
 						border-radius: 12px;
 						padding: 1rem;
+						position: relative;
 						.user {
 							min-width: 50%;
 							@include flex(row, flex-start, flex-start, 0.5rem);
@@ -205,6 +207,16 @@
 							p {
 								font-size: 1rem;
 							}
+						}
+						button {
+							position: absolute;
+							bottom: 1rem;
+							right: 2rem;
+							outline: none;
+							color: $blue;
+							border: none;
+							font-size: 1.3rem;
+							cursor: pointer;
 						}
 					}
 				}

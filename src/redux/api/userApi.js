@@ -34,6 +34,13 @@ export const userApi = createApi({
 				},
 			}),
 		}),
+		verifyPhoneNumber: builder.mutation({
+			query: ({ number, _id }) => ({
+				url: `verification?_id=${_id}`,
+				method: "PUT",
+				body: { number },
+			}),
+		}),
 	}),
 });
 
@@ -48,4 +55,9 @@ export const getUser = async (_id) => {
 	}
 };
 
-export const { useLoginMutation, useAddToWishListMutation, useEditProfileMutation } = userApi;
+export const {
+	useLoginMutation,
+	useAddToWishListMutation,
+	useEditProfileMutation,
+	useVerifyPhoneNumberMutation,
+} = userApi;

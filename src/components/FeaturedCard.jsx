@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaRegHeart } from "react-icons/fa6";
-import { Link, redirect, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { calculateTimeDifference } from "../utils/function";
 import { getUser, useAddToWishListMutation } from "../redux/api/userApi";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,7 +14,6 @@ const FeaturedCard = ({ name, products, refetch }) => {
 		<article className="productsArticle">
 			<header>
 				<h2>{name}</h2>
-				{/* <Link to={`/products/${name}`}>See All</Link> */}
 				<button onClick={() => navigate("/products-all")}>See All</button>
 			</header>
 			<main>

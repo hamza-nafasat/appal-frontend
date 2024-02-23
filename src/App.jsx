@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect } from "react";
+import React, { lazy, Suspense, useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Loader from "./components/Loader";
@@ -23,6 +23,7 @@ const Profile = lazy(() => import("./pages/Profile"));
 const App = () => {
 	const dispatch = useDispatch();
 	const { user, loading } = useSelector((state) => state.userReducer);
+
 	useEffect(() => {
 		onAuthStateChanged(auth, async (user) => {
 			if (user) {

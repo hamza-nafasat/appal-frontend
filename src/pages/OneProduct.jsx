@@ -9,14 +9,18 @@ import { getUser, useAddToWishListMutation } from "../redux/api/userApi";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { serverUrl } from "../redux/store";
+import { MdMessage } from "react-icons/md";
 
 const OneProduct = () => {
 	const [red, setRed] = useState(false);
 	const [product, setProduct] = useState();
 	const [productOwner, setProductOwner] = useState();
-	const [price, setPrice] = useState(product?.minPrice.toString() || "");
+	const [price, setPrice] = useState("");
 	const [description, setDescription] = useState("");
 	const [openPopUp, setOpenPopUp] = useState(false);
+
+	const [bidOwnerId, setBidOwnerId] = useState("");
+	const [openInnerMsgF, setOpenInnerMsgF] = useState(false);
 
 	const { user } = useSelector((state) => state.userReducer);
 	const [addToWishList, { data: msgData }] = useAddToWishListMutation();
@@ -29,15 +33,19 @@ const OneProduct = () => {
 		if (data && data.data) {
 			setProduct(data.data.product);
 			setProductOwner(data.data.owner);
+			setBidOwnerId("");
 		}
 		refetch();
 	}, [data]);
-
-	const sendMessage = () => {
-		setOpenPopUp(false);
-	};
 	const placeBid = async () => {
 		try {
+			if (!user?.isVerified) return toast.error("Please Verify Your Account First");
+			if (price < product?.minPrice) {
+				return toast.error(`We recommend raising your amount to ${product?.minPrice}`);
+			}
+			if (product?.ownerId == user?._id) {
+				return toast.error("You are owner sir");
+			}
 			const result = await bidOnProduct({
 				productId: productId?.toString(),
 				userId: user?._id.toString(),
@@ -52,14 +60,12 @@ const OneProduct = () => {
 			toast.error(error.data.message);
 		}
 	};
-
 	useEffect(() => {
 		user.wishList.map((productId) => {
 			if (productId == product?._id) return setRed(true);
 			refetch().unwrap();
 		});
 	}, [msgData, product]);
-
 	const addToWishListHandler = async () => {
 		try {
 			const msgData = await addToWishList({ productId: product._id, _id: user._id }).unwrap();
@@ -77,11 +83,16 @@ const OneProduct = () => {
 		<Loader />
 	) : (
 		<div className="onProductPage">
-			<Header />
+			<Header
+				bidOwnerId={bidOwnerId}
+				openInnerMsgF={openInnerMsgF}
+				setOpenInnerMsgF={setOpenInnerMsgF}
+				setBidOwnerId={setBidOwnerId}
+			/>
 			<main>
 				<article className="first">
 					<img
-						src={`${serverUrl}/${product.photos[0]}` || "/src/assets/noImage.jpg"}
+						src={`${serverUrl}/${product?.photos[0]}` || "/src/assets/noImage.jpg"}
 						alt="product-image"
 					/>
 					<section className="details">
@@ -99,11 +110,7 @@ const OneProduct = () => {
 							<p>{product.condition}</p>
 						</div>
 						<div>
-							<p>Min Price</p>
-							<p>{product.minPrice}</p>
-						</div>
-						<div>
-							<p>Max Price</p>
+							<p style={{ width: "100%" }}>Price</p>
 							<p>{product.maxPrice}</p>
 						</div>
 
@@ -116,17 +123,19 @@ const OneProduct = () => {
 				<article className="second">
 					<section className="profile">
 						<img
-							src={productOwner.photo || "/src/assets/noProfile.jpg"}
+							src={productOwner?.photo || "/src/assets/noProfile.jpg"}
 							alt="newUser profile"
 						/>
 						<div className="userDetails">
-							<h4>{productOwner.name}</h4>
-							<p>{product.city}</p>
-							<p>{productOwner.isVerified ? "Account Verified" : "NOt Verified"}</p>
+							<h4>{productOwner?.name}</h4>
+							<p>{product?.city}</p>
+							<p>{productOwner?.isVerified ? "Account Verified" : "NOt Verified"}</p>
 							<div className="buttons">
 								<button onClick={() => setOpenPopUp(!openPopUp)}>Bid Now</button>
 								<button>
-									<IoCall />
+									<a href={`tel:${productOwner?.phoneNumber}`}>
+										<IoCall color="#ffffff" />
+									</a>
 								</button>
 							</div>
 						</div>
@@ -147,8 +156,9 @@ const OneProduct = () => {
 								/>
 							</div>
 							<div className="buttons">
-								<button onClick={sendMessage}>Send Message</button>
-								<button onClick={placeBid}>Bid</button>
+								<button style={{ width: "100%" }} onClick={placeBid}>
+									Bid
+								</button>
 							</div>
 						</div>
 						{product.bids.length > 0 && (
@@ -156,7 +166,14 @@ const OneProduct = () => {
 								<h2>Bids on this post</h2>
 								<div className="allBids">
 									{product?.bids?.map((bid, i) => (
-										<BidsComponent user={user} item={bid} key={i} />
+										<BidsComponent
+											user={user}
+											item={bid}
+											key={i}
+											productOwnerId={product?.ownerId}
+											setBidOwnerId={setBidOwnerId}
+											setOpenInnerMsgF={setOpenInnerMsgF}
+										/>
 									))}
 								</div>
 							</>
@@ -170,8 +187,17 @@ const OneProduct = () => {
 
 export default OneProduct;
 
-function BidsComponent({ item, user }) {
+function BidsComponent({ item, user, productOwnerId, setBidOwnerId, setOpenInnerMsgF }) {
 	const [newUser, setNewUser] = useState(false);
+
+	const bidMsgHandler = () => {
+		if (productOwnerId !== user?._id) {
+			toast.error("You Are Not Owner");
+		} else {
+			setBidOwnerId(item?.userId);
+			if (setOpenInnerMsgF) setOpenInnerMsgF(true);
+		}
+	};
 
 	useEffect(() => {
 		(async () => {
@@ -184,14 +210,17 @@ function BidsComponent({ item, user }) {
 			<div className="user">
 				<img src={newUser?.photo || "/src/assets/noProfile.jpg"} alt="newUser profile" />
 				<div>
-					<p>{newUser.name}</p>
-					<p>{calculateTimeDifference(item.createdAt)}</p>
+					<p>{newUser?.name}</p>
+					<p>{calculateTimeDifference(item?.createdAt)}</p>
 				</div>
 			</div>
-			<div className="price">{item.userId == user._id && <h3>RS {item.price}/-</h3>}</div>
+			<div className="price">{item?.userId == user?._id && <h3>RS {item?.price}/-</h3>}</div>
 			<div className="description">
-				<p>This is a sample description text regarding bidding section.</p>
+				<p>{item?.description}</p>
 			</div>
+			<button onClick={bidMsgHandler}>
+				<MdMessage />
+			</button>
 		</section>
 	);
 }

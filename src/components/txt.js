@@ -176,7 +176,7 @@ export const fullCategoriesObj = {
 
 // ...................................
 
-export const categories = ["iphone", "ipad", "airpod", "mackbook", "watche", "homepod"];
+export const categories = ["iphone", "ipad", "airpod", "mackbook", "watch", "homepod"];
 
 export const CategoriesObj = {
 	iphone: [

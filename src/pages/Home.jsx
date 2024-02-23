@@ -7,7 +7,6 @@ import toast from "react-hot-toast";
 import Loader from "../components/Loader";
 
 const Home = () => {
-	const [category, setCategory] = useState("");
 	// getting data from backend
 	const { data, isError, isLoading, refetch } = useLatestProductQuery();
 	if (isError) {

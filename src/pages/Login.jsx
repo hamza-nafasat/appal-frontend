@@ -14,7 +14,8 @@ const Login = () => {
 	const loginFunc = async () => {
 		try {
 			const authProvider = new GoogleAuthProvider();
-			const { user } = await signInWithPopup(auth, authProvider);
+			const result = await signInWithPopup(auth, authProvider);
+			const user = result.user;
 			const res = await login({
 				_id: user.uid,
 				name: user.displayName,

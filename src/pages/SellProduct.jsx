@@ -36,6 +36,7 @@ const SellProduct = () => {
 	};
 	// form submit and create a product
 	const submitHandlerForAll = () => {
+		if (!user?.isVerified) return toast.error("Please Verify Your Account First");
 		const countryName = Country.getCountryByCode(selectedCountry).name;
 		const stateName = State.getStateByCodeAndCountry(selectedState, selectedCountry).name;
 		const formData = new FormData();

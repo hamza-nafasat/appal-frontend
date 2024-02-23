@@ -1,4 +1,4 @@
-import { signOut, RecaptchaVerifier, signInWithPhoneNumber, PhoneAuthProvider } from "firebase/auth";
+import { signOut, RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { BsFillShieldLockFill, BsTelephoneFill } from "react-icons/bs";
@@ -12,24 +12,26 @@ import Header from "../components/Header";
 import Loader from "../components/Loader";
 import ProfileHeader from "../components/profileHeader";
 import { auth } from "../firebase";
-import { useEditProfileMutation } from "../redux/api/userApi";
+import { useEditProfileMutation, useVerifyPhoneNumberMutation } from "../redux/api/userApi";
 
 const Profile = () => {
 	const { user } = useSelector((state) => state.userReducer);
 
+	const primaryImg = user?.photo;
+	const email = user?.email;
+	const number = user?.number?.toString() || "";
+	const sinceMember = new Date(user?.createdAt).getFullYear();
+	const verified = user?.isVerified;
+
 	const [name, setName] = useState(user?.name);
-	const [primaryImg] = useState(user?.photo);
-	const [email] = useState(user?.email);
-	const [number] = useState(user?.number?.toString() || "");
 	const [dob, setDob] = useState(user?.dob?.split("T")?.[0] || "");
-	const [sinceMember] = useState(new Date(user?.createdAt).getFullYear());
-	const [verified] = useState(user?.isVerified);
-	const [updateUser] = useEditProfileMutation();
 	const [otp, setOtp] = useState("");
 	const [phoneNumber, setPhoneNumber] = useState();
 	const [openPop, setOpenPop] = useState(false);
 	const [showOtp, setShowOtp] = useState(false);
 	const [loading, setLoading] = useState(false);
+	const [poneVeri] = useVerifyPhoneNumberMutation();
+	const [updateUser] = useEditProfileMutation();
 
 	const handelVErification = (e) => {
 		e.preventDefault();
@@ -59,7 +61,6 @@ const Profile = () => {
 			console.log("Logout Error", error);
 		}
 	};
-
 	const setupRecaptcha = () => {
 		if (!window.recaptchaVerifier) {
 			window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
@@ -70,32 +71,38 @@ const Profile = () => {
 			});
 		}
 	};
-
-	const otpGeneratingFunc = () => {
-		setLoading(true);
-		setupRecaptcha();
-		const appVerifier = window.recaptchaVerifier;
-		signInWithPhoneNumber(auth, `+${phoneNumber}`, appVerifier)
-			.then((confirmationResult) => {
-				window.confirmationResult = confirmationResult;
-				setShowOtp(true);
-				setLoading(false);
-				toast.success("OTP Sended Successfully");
-			})
-			.catch((error) => {
-				console.log("Error during generating otp", error);
-				setLoading(false);
-			});
+	const otpGeneratingFunc = async () => {
+		try {
+			setLoading(true);
+			setupRecaptcha();
+			const appVerifier = window.recaptchaVerifier;
+			const confirmationResult = await signInWithPhoneNumber(
+				auth,
+				`+${phoneNumber}`,
+				appVerifier
+			);
+			window.confirmationResult = confirmationResult;
+			setShowOtp(true);
+			setLoading(false);
+			toast.success("OTP Send Successfully");
+		} catch (error) {
+			console.log("Error during generating otp", error);
+			setLoading(false);
+		}
 	};
+
 	const otpVerificationHandler = () => {
 		setLoading(true);
 		window.confirmationResult
 			.confirm(otp)
 			.then(async (response) => {
+				toast.success(data.message);
+				const data = await poneVeri({ number: `+${phoneNumber}`, _id: user?._id });
+				console.log(data);
 				setLoading(false);
 				console.log(response);
-				toast.success("Successfully Verified");
 				setOpenPop(false);
+				toast.success("Please Login Again Once Due To Security Purpose");
 			})
 			.catch((error) => {
 				console.log("error while otp verification", error);
@@ -103,37 +110,6 @@ const Profile = () => {
 				setLoading(false);
 			});
 	};
-
-	// const otpVerificationHandler = () => {
-	// 	const currentUser = auth.currentUser;
-	// 	setLoading(true);
-	// 	window.confirmationResult
-	// 		.confirm(otp)
-	// 		.then(async (response) => {
-	// 			// Create the credential from the verification ID and the OTP
-	// 			const credential = PhoneAuthProvider.credential(response.verificationId, otp);
-	// 			// Link the phone number to the current user
-	// 			currentUser
-	// 				.linkWithPhoneNumber(credential)
-	// 				.then((usercred) => {
-	// 					const newUser = usercred.user;
-	// 					console.log("Phone number linked", newUser);
-	// 					toast.success("Phone number linked successfully");
-	// 				})
-	// 				.catch((error) => {
-	// 					console.error("Error linking phone number", error);
-	// 					toast.error("Error linking phone number");
-	// 				});
-	// 			setLoading(false);
-	// 			toast.success("Successfully Verified");
-	// 			setOpenPop(false);
-	// 		})
-	// 		.catch((error) => {
-	// 			console.error("error while otp verification", error);
-	// 			toast.error("Please Enter a Correct OTP");
-	// 			setLoading(false);
-	// 		});
-	// };
 
 	return !user ? (
 		<Loader />
